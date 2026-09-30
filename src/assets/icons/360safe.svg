@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="360">
+  <defs>
+    <linearGradient id="ring" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8a22"/>
+      <stop offset="1" stop-color="#ff4a1c"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6cc832"/>
+      <stop offset="1" stop-color="#2f9e1f"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="29" fill="#fff" stroke="url(#ring)" stroke-width="4"/>
+  <text
+    x="32"
+    y="41"
+    text-anchor="middle"
+    font-family="Arial Black, Arial, sans-serif"
+    font-size="25"
+    font-weight="900"
+    fill="url(#green)"
+  >360</text>
+</svg>

@@ -1,0 +1,74 @@
+/*
+ * Theme-agnostic scoped scaffold (#213): the structural rules every OS theme
+ * needs — root sizing/isolation, portal scope marker, cursor-leak containment
+ * and resizable-handle geometry. Everything that says "Windows XP" (Tahoma
+ * webfont, .cur cursors, focus affordances) lives in the theme's own sheet,
+ * src/themes/xp/xp-chrome.css, imported by the same entries.
+ */
+.windows-xp-root {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  min-width: 1024px;
+}
+
+/*
+ * Scope marker for content rendered into document.body via createPortal
+ * (context menus, dialog overlays). Portals do not inherit from
+ * .windows-xp-root; the active theme's sheet re-applies its font/cursor here,
+ * and the class re-enters the xp.css scope (see vite.xp-css-scope.ts).
+ */
+
+/* Keep host-page and component-library cursor declarations from leaking into
+   the emulated OS. Controls use the theme's pointer unless a rule in the
+   theme sheet opts into a different one. */
+.windows-xp-root *,
+.windows-xp-portal * {
+  cursor: inherit !important;
+}
+
+.windows-xp-root .xp-hide-cursor,
+.windows-xp-root .xp-hide-cursor * {
+  cursor: none !important;
+}
+
+/* react-resizable handles (geometry only — pointers come from the theme). */
+.windows-xp-root .react-resizable-handle {
+  z-index: 2;
+  padding: 0;
+  background-image: none;
+  transform: none;
+}
+
+.windows-xp-root .react-resizable-handle-n,
+.windows-xp-root .react-resizable-handle-s {
+  left: 8px;
+  right: 8px;
+  width: auto;
+  height: 5px;
+  margin: 0;
+}
+
+.windows-xp-root .react-resizable-handle-e,
+.windows-xp-root .react-resizable-handle-w {
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+  height: auto;
+  margin: 0;
+}
+
+.windows-xp-root .react-resizable-handle-ne,
+.windows-xp-root .react-resizable-handle-sw {
+  width: 9px;
+  height: 9px;
+}
+
+.windows-xp-root .react-resizable-handle-nw,
+.windows-xp-root .react-resizable-handle-se {
+  width: 9px;
+  height: 9px;
+}

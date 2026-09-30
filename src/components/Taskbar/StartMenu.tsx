@@ -1,0 +1,378 @@
+import React, { useState, useMemo, useCallback } from 'react';
+import styled from 'styled-components';
+import { TFunction } from 'i18next';
+import XPIcon from '../XPIcon';
+import { xpScrollbarStyles } from '../../theme';
+import { APP_REGISTRY } from '../../registry/apps';
+import { sounds } from '../../utils/soundManager';
+import StartMenuFlyout from './StartMenuFlyout';
+import { StartMenuProfile } from '../../data/culture';
+import { SYSTEM_PATHS } from '../../data/systemPaths';
+import { resolveOSTheme } from '../../themes/useOSTheme';
+
+const StartMenuContainer = styled.div`
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 380px;
+  background-color: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_BLUE};
+  border-top-left-radius: 5px;
+  border-top-right-radius: 8px;
+  z-index: 20000;
+  box-shadow: 2px -2px 5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible;
+`;
+
+const StartHeader = styled.div`
+  box-sizing: border-box;
+  position: relative;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => resolveOSTheme(theme).tokens.WHITE};
+  height: 54px;
+  padding: 6px 5px 5px;
+  width: 100%;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 8px;
+  background: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_HEADER_GRADIENT};
+  overflow: hidden;
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(
+      to right,
+      transparent 0,
+      rgba(255, 255, 255, 0.3) 1%,
+      rgba(255, 255, 255, 0.5) 2%,
+      rgba(255, 255, 255, 0.5) 95%,
+      rgba(255, 255, 255, 0.3) 98%,
+      rgba(255, 255, 255, 0.2) 99%,
+      transparent 100%
+    );
+    box-shadow: inset 0 -1px 1px
+      ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_HEADER_SHADOW};
+  }
+
+  .user-avatar {
+    width: 42px;
+    height: 42px;
+    margin-right: 5px;
+    border-radius: 3px;
+    border: 2px solid rgba(222, 222, 222, 0.8);
+    background: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_TINT};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  span {
+    color: ${({ theme }) => resolveOSTheme(theme).tokens.WHITE};
+    font-size: 14px;
+    font-weight: 700;
+    text-shadow: 1px 1px rgba(0, 0, 0, 0.7);
+  }
+`;
+
+const StartBody = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  min-height: 220px;
+  max-height: calc(100vh - 84px);
+  width: calc(100% - 4px);
+  position: relative;
+  border-top: 1px solid ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_RIGHT_BORDER};
+  box-shadow: 0 1px ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_RIGHT_BORDER};
+`;
+
+const OrangeLine = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_DIVIDER_ORANGE} 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  z-index: 1;
+`;
+
+const StartLeft = styled.div`
+  box-sizing: border-box;
+  width: 50%;
+  background: ${({ theme }) => resolveOSTheme(theme).tokens.WHITE};
+  padding: 6px 5px 0;
+  overflow-y: auto;
+  ${xpScrollbarStyles}
+`;
+
+const StartRight = styled.div`
+  box-sizing: border-box;
+  width: 50%;
+  background: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_RIGHT_BG};
+  border-left: solid rgba(58, 58, 255, 0.37) 1px;
+  padding: 6px 5px 5px;
+  overflow-y: auto;
+  ${xpScrollbarStyles}
+`;
+
+const MenuItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  color: ${({ theme }) => resolveOSTheme(theme).tokens.GREY_33};
+
+  &:hover {
+    background: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_FOOTER_HOVER};
+    color: white;
+  }
+
+  .menu-icon {
+    margin-right: 5px;
+  }
+`;
+
+const RightMenuItem = styled(MenuItem)`
+  color: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_RIGHT_TEXT};
+
+  &:hover {
+    background: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_FOOTER_HOVER};
+    color: ${({ theme }) => resolveOSTheme(theme).tokens.WHITE};
+  }
+`;
+
+const MenuSeparator = styled.div`
+  height: 7.5px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  background-clip: content-box;
+`;
+
+const MenuArrow = styled.span`
+  margin-left: auto;
+  font-size: 10px;
+  color: ${({ theme }) => resolveOSTheme(theme).tokens.GREY_66};
+`;
+
+const RightMenuSeparator = styled(MenuSeparator)`
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+`;
+
+const StartFooter = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  justify-content: flex-end;
+  color: ${({ theme }) => resolveOSTheme(theme).tokens.WHITE};
+  height: 36px;
+  width: 100%;
+  padding: 0 10px;
+  gap: 10px;
+  background: ${({ theme }) => resolveOSTheme(theme).tokens.STARTMENU_FOOTER_GRADIENT};
+
+  button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    padding: 3px;
+
+    &:hover {
+      background-color: rgba(60, 80, 210, 0.5);
+    }
+
+    .footer-icon {
+      margin-right: 5px;
+    }
+  }
+`;
+
+interface StartMenuProps {
+  isOpen: boolean;
+  menuRef: React.RefObject<HTMLDivElement>;
+  userName: string;
+  startMenuProfile: StartMenuProfile;
+  cultureKey: string;
+  onLaunch: (appName: string, path?: string[]) => void;
+  onTurnOff: () => void;
+  onLogout: () => void;
+  t: TFunction;
+}
+
+const StartMenu: React.FC<StartMenuProps> = ({
+  isOpen,
+  menuRef,
+  userName,
+  startMenuProfile,
+  cultureKey,
+  onLaunch,
+  onTurnOff,
+  onLogout,
+  t,
+}) => {
+  const [flyoutOpen, setFlyoutOpen] = useState(false);
+
+  const launchWithSound = useCallback(
+    (appName: string, path?: string[]) => {
+      sounds.menuCommand();
+      onLaunch(appName, path);
+    },
+    [onLaunch]
+  );
+
+  const allProgramsApps = useMemo(
+    () =>
+      Object.values(APP_REGISTRY).filter(
+        app => app.showInStartMenu !== false && (!app.locales || app.locales.includes(cultureKey))
+      ),
+    [cultureKey]
+  );
+
+  if (!isOpen) return null;
+
+  return (
+    <StartMenuContainer
+      ref={menuRef}
+      data-testid="start-menu"
+      onMouseLeave={() => setFlyoutOpen(false)}
+    >
+      <StartHeader>
+        <div className="user-avatar">
+          <XPIcon name="user" size={32} color="white" />
+        </div>
+        <span>{userName}</span>
+      </StartHeader>
+      <StartBody>
+        <OrangeLine />
+        <StartLeft>
+          {startMenuProfile.pinned.map(app => (
+            <MenuItem key={app.id} onClick={() => launchWithSound(app.action)}>
+              <XPIcon name={app.icon} size={24} className="menu-icon" />
+              <span>{t(app.nameKey)}</span>
+            </MenuItem>
+          ))}
+          <MenuSeparator />
+          {startMenuProfile.recent.map(app => (
+            <MenuItem
+              key={app.id}
+              data-testid={`start-menu-${app.id}`}
+              onClick={() => launchWithSound(app.action)}
+            >
+              <XPIcon name={app.icon} size={24} className="menu-icon" />
+              <span>{t(app.nameKey)}</span>
+            </MenuItem>
+          ))}
+          <MenuSeparator />
+          <MenuItem
+            data-testid="start-menu-all-programs"
+            onMouseEnter={() => setFlyoutOpen(true)}
+            onClick={() => setFlyoutOpen(prev => !prev)}
+          >
+            <XPIcon name="programs" size={24} className="menu-icon" />
+            <span>{t('startMenu.allPrograms')}</span>
+            <MenuArrow>
+              <svg width="6" height="10" viewBox="0 0 6 10">
+                <path d="M0 0 L6 5 L0 10 Z" fill="currentColor" />
+              </svg>
+            </MenuArrow>
+          </MenuItem>
+        </StartLeft>
+        <StartRight>
+          <RightMenuItem onClick={() => launchWithSound('Explorer', [...SYSTEM_PATHS.myDocuments])}>
+            <XPIcon name="documents" size={24} className="menu-icon" />
+            <span>{t('startMenu.myDocuments')}</span>
+          </RightMenuItem>
+          <RightMenuItem onClick={() => launchWithSound('RecentDocuments')}>
+            <XPIcon name="documents" size={24} className="menu-icon" />
+            <span>{t('startMenu.recentDocuments')}</span>
+          </RightMenuItem>
+          <RightMenuItem onClick={() => launchWithSound('Explorer', [...SYSTEM_PATHS.myPictures])}>
+            <XPIcon name="image" size={24} className="menu-icon" />
+            <span>{t('startMenu.myPictures')}</span>
+          </RightMenuItem>
+          <RightMenuItem onClick={() => launchWithSound('Explorer', [...SYSTEM_PATHS.myMusic])}>
+            <XPIcon name="folder" size={24} className="menu-icon" />
+            <span>{t('startMenu.myMusic')}</span>
+          </RightMenuItem>
+          <RightMenuItem onClick={() => launchWithSound('Explorer', [...SYSTEM_PATHS.myComputer])}>
+            <XPIcon name="computer" size={24} className="menu-icon" />
+            <span>{t('startMenu.myComputer')}</span>
+          </RightMenuItem>
+          <RightMenuSeparator />
+          <RightMenuItem onClick={() => launchWithSound('ControlPanel')}>
+            <XPIcon name="control_panel" size={24} className="menu-icon" />
+            <span>{t('startMenu.controlPanel')}</span>
+          </RightMenuItem>
+          <RightMenuItem onClick={() => launchWithSound('PrintersAndFaxes')}>
+            <XPIcon name="printer" size={24} className="menu-icon" />
+            <span>{t('startMenu.printersAndFaxes')}</span>
+          </RightMenuItem>
+          <RightMenuSeparator />
+          <RightMenuItem onClick={() => launchWithSound('Search')}>
+            <XPIcon name="search" size={24} className="menu-icon" />
+            <span>{t('startMenu.search')}</span>
+          </RightMenuItem>
+          <RightMenuItem onClick={() => launchWithSound('HelpAndSupport')}>
+            <XPIcon name="help" size={24} className="menu-icon" />
+            <span>{t('startMenu.help')}</span>
+          </RightMenuItem>
+          <RightMenuItem onClick={() => launchWithSound('RunDialog')}>
+            <XPIcon name="run" size={24} className="menu-icon" />
+            <span>{t('startMenu.run')}</span>
+          </RightMenuItem>
+        </StartRight>
+      </StartBody>
+      <StartFooter>
+        <button onClick={onLogout}>
+          <XPIcon name="logout" size={16} className="footer-icon" color="white" />
+          {t('startMenu.logOff')}
+        </button>
+        <button onClick={onTurnOff}>
+          <XPIcon name="shutdown" size={16} className="footer-icon" color="white" />
+          {t('startMenu.turnOff')}
+        </button>
+      </StartFooter>
+      {flyoutOpen && (
+        <StartMenuFlyout
+          apps={allProgramsApps}
+          onLaunch={appId => {
+            setFlyoutOpen(false);
+            launchWithSound(appId);
+          }}
+        />
+      )}
+    </StartMenuContainer>
+  );
+};
+
+export default StartMenu;

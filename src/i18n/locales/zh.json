@@ -1,0 +1,1302 @@
+{
+  "desktop": {
+    "myComputer": "我的电脑",
+    "myDocuments": "我的文档",
+    "recycleBin": "回收站",
+    "internetExplorer": "Internet Explorer",
+    "networkNeighborhood": "网上邻居",
+    "newFolderName": "新建文件夹",
+    "newTextDocumentName": "新建文本文档.txt",
+    "propertiesTitle": "显示属性"
+  },
+  "desktopProperties": {
+    "themes": "主题",
+    "desktop": "桌面",
+    "screenSaver": "屏幕保护程序",
+    "appearance": "外观",
+    "settings": "设置",
+    "background": "背景：",
+    "position": "位置：",
+    "stretch": "拉伸",
+    "comingSoon": "此标签页仅用于显示。"
+  },
+  "controlPanel": {
+    "title": "控制面板",
+    "display": "显示",
+    "soundAndAudio": "声音和音频设备",
+    "mouse": "鼠标",
+    "back": "返回",
+    "ok": "确定",
+    "apply": "应用(A)",
+    "cancel": "取消",
+    "categories": {
+      "addRemovePrograms": "添加或删除程序",
+      "appearance": "外观和主题",
+      "dateTime": "日期和时间",
+      "display": "显示",
+      "folderOptions": "文件夹选项",
+      "fonts": "字体",
+      "keyboard": "键盘",
+      "mouse": "鼠标",
+      "network": "网络连接",
+      "userAccounts": "用户账户",
+      "sound": "声音和音频设备",
+      "system": "系统"
+    },
+    "systemLanguage": {
+      "title": "语言设置",
+      "label": "系统语言：",
+      "restartTitle": "重新启动 Windows",
+      "restartMessage": "Windows 必须重新启动才能应用新语言。是否立即重启？"
+    },
+    "displaySettings": {
+      "wallpaper": "壁纸：",
+      "resolution": "屏幕分辨率：",
+      "screensaver": "屏幕保护程序：",
+      "screensaverNone": "(无)",
+      "screensaverLogo": "Windows XP 标志",
+      "preview": "预览"
+    },
+    "soundSettings": {
+      "volume": "设备音量",
+      "mute": "静音(M)",
+      "soundScheme": "声音方案",
+      "programEvents": "程序事件：",
+      "play": "播放",
+      "events": {
+        "startup": "Windows 启动",
+        "shutdown": "Windows 关机",
+        "error": "关键性停止",
+        "ding": "默认响声",
+        "exclamation": "感叹号",
+        "notify": "通知",
+        "menuCommand": "菜单命令",
+        "minimize": "最小化",
+        "restore": "还原",
+        "recycle": "清空回收站"
+      }
+    },
+    "mouseSettings": {
+      "pointerSpeed": "指针速度：",
+      "doubleClickSpeed": "双击速度：",
+      "pointerTrails": "显示指针踪迹"
+    }
+  },
+  "startMenu": {
+    "recentDocuments": "我最近的文档",
+    "allPrograms": "所有程序",
+    "myDocuments": "我的文档",
+    "myComputer": "我的电脑",
+    "myPictures": "我的图片",
+    "myMusic": "我的音乐",
+    "myVideos": "我的视频",
+    "controlPanel": "控制面板",
+    "printersAndFaxes": "打印机和传真",
+    "search": "搜索",
+    "searchPlaceholder": "在此输入进行搜索...",
+    "help": "帮助和支持",
+    "run": "运行...",
+    "logOff": "注销",
+    "turnOff": "关闭计算机",
+    "apps": {
+      "internetExplorer": "Internet Explorer",
+      "qq": "QQ",
+      "qqMail": "QQ 邮箱",
+      "wpsOffice": "WPS Office",
+      "baofeng": "暴风影音",
+      "thunder": "迅雷",
+      "safeGuard": "360 安全卫士",
+      "kugou": "酷狗音乐",
+      "ttplayer": "千千静听"
+    }
+  },
+  "taskbar": {
+    "start": "开始",
+    "context": {
+      "toolbars": "工具栏",
+      "quickLaunch": "快速启动",
+      "cascade": "层叠窗口",
+      "tileHorizontally": "横向平铺窗口",
+      "tileVertically": "纵向平铺窗口",
+      "showDesktop": "显示桌面",
+      "taskManager": "任务管理器",
+      "lockTaskbar": "锁定任务栏",
+      "properties": "属性"
+    }
+  },
+  "taskManager": {
+    "title": "Windows 任务管理器",
+    "applications": "应用程序",
+    "processes": "进程",
+    "performance": "性能",
+    "task": "任务",
+    "status": "状态",
+    "running": "正在运行",
+    "switchTo": "切换至",
+    "endTask": "结束任务",
+    "newTask": "新任务...",
+    "endProcess": "结束进程",
+    "tasksLabel": "下列任务正在运行:",
+    "menu": {
+      "file": "文件",
+      "options": "选项",
+      "view": "查看",
+      "windows": "窗口",
+      "help": "帮助"
+    },
+    "menuItems": {
+      "newTask": "新任务(运行...)",
+      "exit": "退出任务管理器",
+      "alwaysOnTop": "总在最前",
+      "minimizeOnUse": "使用时最小化",
+      "hideWhenMinimized": "最小化时隐藏",
+      "refreshNow": "立即刷新",
+      "updateSpeed": "更新速度",
+      "tileHorizontally": "横向平铺窗口",
+      "tileVertically": "纵向平铺窗口",
+      "cascade": "层叠窗口",
+      "helpTopics": "任务管理器帮助主题",
+      "about": "关于 Windows 任务管理器"
+    },
+    "columns": {
+      "imageName": "映像名称",
+      "userName": "用户名",
+      "cpu": "CPU",
+      "memUsage": "内存使用"
+    },
+    "statusBar": {
+      "processes": "进程数: {{count}}",
+      "cpuUsage": "CPU 使用: {{percent}}%",
+      "commitCharge": "提交更改: {{current}}M / {{limit}}M"
+    },
+    "warning": {
+      "title": "任务管理器警告",
+      "message": "警告: 终止进程可能会导致不希望的结果, 包括数据丢失和系统不稳定。在终止之前, 进程将没有机会保存其状态或数据。你确定要终止此进程吗?",
+      "confirm": "是"
+    },
+    "perf": {
+      "cpuUsage": "CPU 使用",
+      "cpuUsageHistory": "CPU 使用记录",
+      "pfUsage": "PF 使用",
+      "pageFileUsageHistory": "页面文件使用记录",
+      "totals": "总数",
+      "handles": "句柄数",
+      "threads": "线程数",
+      "processes": "进程数",
+      "commitCharge": "提交更改 (K)",
+      "physicalMemory": "物理内存 (K)",
+      "kernelMemory": "核心内存 (K)",
+      "total": "总数",
+      "limit": "限制",
+      "peak": "峰值",
+      "available": "可用",
+      "systemCache": "系统缓存",
+      "paged": "分页",
+      "nonpaged": "未分页"
+    },
+    "about": {
+      "title": "关于 Windows 任务管理器",
+      "message": "Microsoft (R) Windows 任务管理器\n版本 5.1 (内部版本 2600.xpsp_sp3)\n版权所有 (C) 1985-2001 Microsoft Corp."
+    }
+  },
+  "tray": {
+    "volume": "音量",
+    "mute": "静音",
+    "networkConnected": "网络已连接",
+    "safeGuardReminder": "360安全卫士提醒",
+    "safeGuardStatus": "您的电脑安全状态良好"
+  },
+  "volumeControl": {
+    "title": "音量控制",
+    "menu": {
+      "options": "选项(O)",
+      "help": "帮助(H)"
+    },
+    "menuItems": {
+      "properties": "属性(P)",
+      "advancedControls": "高级控制(A)",
+      "exit": "退出(X)",
+      "about": "关于音量控制(A)"
+    },
+    "channels": {
+      "master": "主音量",
+      "wave": "波形",
+      "swSynth": "软件合成器",
+      "cd": "CD 音频"
+    },
+    "balance": "平衡:",
+    "volume": "音量:",
+    "mute": "静音",
+    "muteAll": "全部静音",
+    "about": {
+      "title": "关于音量控制",
+      "message": "音量控制 for Windows XP。"
+    }
+  },
+  "calendar": {
+    "monthNames": [
+      "一月",
+      "二月",
+      "三月",
+      "四月",
+      "五月",
+      "六月",
+      "七月",
+      "八月",
+      "九月",
+      "十月",
+      "十一月",
+      "十二月"
+    ],
+    "weekdays": ["日", "一", "二", "三", "四", "五", "六"],
+    "today": "今天"
+  },
+  "window": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "还原",
+    "move": "移动",
+    "size": "大小",
+    "close": "关闭",
+    "minimizeGroup": "最小化组",
+    "closeGroup": "关闭组"
+  },
+  "explorer": {
+    "details": {
+      "name": "名称",
+      "size": "大小",
+      "type": "类型",
+      "dateModified": "修改日期"
+    },
+    "file": "文件",
+    "edit": "编辑",
+    "view": "查看",
+    "favorites": "收藏",
+    "tools": "工具",
+    "help": "帮助",
+    "back": "后退",
+    "forward": "前进",
+    "up": "向上",
+    "search": "搜索",
+    "folders": "文件夹",
+    "address": "地址",
+    "upload": "上传文件",
+    "objectCount": "{{count}} 个对象",
+    "showHiddenFiles": "显示隐藏文件",
+    "protected": {
+      "title": "删除文件或文件夹时出错",
+      "deleteMessage": "无法删除 {{name}}：这是受保护的系统文件。",
+      "renameMessage": "无法重命名 {{name}}：这是受保护的系统文件。"
+    },
+    "groups": {
+      "hardDisks": "硬盘驱动器",
+      "removableStorage": "有可移动存储的设备",
+      "other": "其他"
+    },
+    "path": {
+      "localDisk": "本地磁盘 ({{drive}})",
+      "opticalDrive": "DVD/CD-RW 驱动器 ({{drive}})"
+    },
+    "types": {
+      "folder": "文件夹",
+      "localDisk": "本地磁盘",
+      "opticalDrive": "CD 驱动器",
+      "file": "文件",
+      "systemFolder": "系统文件夹"
+    },
+    "fileTypes": {
+      "generic": "{{ext}} 文件",
+      "noExtension": "文件",
+      "txt": "文本文档",
+      "jpg": "JPEG 图像",
+      "jpeg": "JPEG 图像",
+      "bmp": "位图图像",
+      "png": "PNG 图像",
+      "gif": "GIF 图像",
+      "ico": "图标",
+      "mp3": "MP3 音频文件",
+      "wav": "波形声音",
+      "m3u": "Winamp 媒体文件",
+      "zip": "压缩(zipped)文件夹",
+      "html": "HTML 文档",
+      "htm": "HTML 文档",
+      "url": "Internet 快捷方式",
+      "exe": "应用程序",
+      "lnk": "快捷方式",
+      "ini": "配置设置",
+      "doc": "WordPad 文档"
+    },
+    "sidebar": {
+      "systemTasks": "系统任务",
+      "otherPlaces": "其他位置",
+      "details": "详细信息",
+      "viewSystemInfo": "查看系统信息",
+      "addRemovePrograms": "添加/删除程序",
+      "changeSettings": "更改设置",
+      "expand": "展开",
+      "collapse": "收起"
+    },
+    "errors": {
+      "pathNotFound": "Windows 找不到该路径。",
+      "damaged": "磁盘或文件已损坏，无法打开。"
+    },
+    "password": {
+      "title": "输入密码",
+      "message": "此文件夹已加密，请输入密码访问。"
+    },
+    "recycleBin": {
+      "restore": "还原",
+      "empty": "清空回收站",
+      "emptyTitle": "清空回收站",
+      "emptyConfirm": "确定要永久删除回收站中的所有项目吗？",
+      "emptyMessage": "回收站是空的。"
+    },
+    "menuItems": {
+      "newWindow": "新建窗口(N)",
+      "close": "关闭(C)",
+      "selectAll": "全选(A)",
+      "refresh": "刷新(R)",
+      "toolbars": "工具栏(T)",
+      "statusBar": "状态栏(B)",
+      "explorerBar": "浏览器栏(E)",
+      "thumbnails": "缩略图(H)",
+      "tiles": "平铺(S)",
+      "icons": "图标(N)",
+      "list": "列表(L)",
+      "details": "详细信息(D)",
+      "addToFavorites": "添加到收藏夹(A)...",
+      "organizeFavorites": "整理收藏夹(O)...",
+      "mapNetworkDrive": "映射网络驱动器(N)...",
+      "disconnectNetworkDrive": "断开网络驱动器(D)...",
+      "folderOptions": "文件夹选项(O)...",
+      "helpTopics": "帮助主题(H)",
+      "aboutWindows": "关于 Windows(A)"
+    }
+  },
+  "contextMenu": {
+    "open": "打开",
+    "explore": "资源管理器",
+    "search": "搜索",
+    "cut": "剪切",
+    "copy": "复制",
+    "paste": "粘贴",
+    "delete": "删除",
+    "rename": "重命名",
+    "properties": "属性",
+    "refresh": "刷新",
+    "new": "新建",
+    "newFolder": "文件夹",
+    "newTextDocument": "文本文档"
+  },
+  "login": {
+    "welcome": "欢迎使用",
+    "toLogOn": "要开始，请单击您的用户名",
+    "username": "用户",
+    "password": "密码",
+    "login": "登录",
+    "turnOff": "关闭计算机",
+    "incorrectPassword": "密码不正确",
+    "forgotPasswordHint": "忘记密码？查看 README"
+  },
+  "paperOS": {
+    "name": "纸页系统"
+  },
+  "shutdown": {
+    "title": "关闭计算机",
+    "message": "您希望计算机做什么？",
+    "standBy": "待机",
+    "turnOff": "关闭",
+    "restart": "重新启动",
+    "cancel": "取消"
+  },
+  "apps": {
+    "evidenceReport": "证据报告",
+    "recentDocuments": "我最近的文档",
+    "explorer": "Windows 资源管理器",
+    "notepad": "记事本",
+    "markdownViewer": "Markdown 查看器",
+    "paint": "画图",
+    "calculator": "计算器",
+    "commandPrompt": "命令提示符",
+    "volumeControl": "音量控制",
+    "networkConnections": "网络连接",
+    "minesweeper": "扫雷",
+    "solitaire": "纸牌",
+    "deductionSheet": "推理表",
+    "evidenceBoard": "证据板",
+    "wordpad": "写字板",
+    "mediaPlayer": "Windows Media Player",
+    "messenger": "MSN Messenger",
+    "outlook": "Outlook Express",
+    "homeDoorTV": "家门卫视",
+    "comingSoon": "此功能正在开发中，敬请期待！"
+  },
+  "homeDoorTV": {
+    "camera": "门口摄像头 1",
+    "refresh": "刷新画面",
+    "feedAlt": "门口监控画面：快递已送达",
+    "deliveryNotice": "检测到门口有一个包裹。快递员已离开。",
+    "online": "摄像头在线",
+    "recording": "录像状态：正常"
+  },
+  "networkConnections": {
+    "title": "网络连接",
+    "localConnection": "本地连接",
+    "wirelessConnection": "无线网络连接",
+    "connected": "已连接",
+    "disconnected": "未连接",
+    "local": "本地",
+    "wireless": "无线",
+    "statusTitle": "本地连接 状态",
+    "lanGroup": "LAN 或高速 Internet",
+    "generalTab": "常规",
+    "supportTab": "支持",
+    "connectionGroup": "连接",
+    "activityGroup": "活动",
+    "status": "状态",
+    "duration": "持续时间",
+    "speed": "速度",
+    "speedValue": "100.0 Mbps",
+    "sent": "发送",
+    "received": "接收",
+    "packets": "数据包",
+    "bytesLabel": "字节",
+    "properties": "属性",
+    "disable": "禁用",
+    "close": "关闭",
+    "connectionStatusGroup": "连接状态",
+    "addressType": "地址类型",
+    "assignedByDhcp": "由 DHCP 指派",
+    "ipAddress": "IP 地址",
+    "subnetMask": "子网掩码",
+    "defaultGateway": "默认网关",
+    "repair": "修复",
+    "repairing": "正在修复...",
+    "repairSuccess": "连接已修复。",
+    "details": "详细信息...",
+    "bytes": "{{value}} 字节"
+  },
+  "errorBoundary": {
+    "title": "应用程序出错",
+    "message": "此应用遇到了问题，无法继续运行。",
+    "details": "查看详细信息"
+  },
+  "notepad": {
+    "untitled": "无标题",
+    "untitledFile": "未命名.txt",
+    "cursorPosition": "第 {{line}} 行，第 {{column}} 列",
+    "menu": {
+      "file": "文件(F)",
+      "edit": "编辑(E)",
+      "format": "格式(O)",
+      "view": "查看(V)",
+      "help": "帮助(H)"
+    },
+    "menuitems": {
+      "new": "新建(N)",
+      "open": "打开(O)...",
+      "save": "保存(S)",
+      "saveAs": "另存为(A)...",
+      "pageSetup": "页面设置(U)...",
+      "print": "打印(P)...",
+      "exit": "退出(X)",
+      "undo": "撤销(U)",
+      "redo": "恢复(R)",
+      "cut": "剪切(T)",
+      "copy": "复制(C)",
+      "paste": "粘贴(P)",
+      "delete": "删除(L)",
+      "find": "查找(F)...",
+      "replace": "替换(R)...",
+      "goTo": "转到(G)...",
+      "selectAll": "全选(A)",
+      "wrap": "自动换行(W)",
+      "font": "字体(F)...",
+      "statusBar": "状态栏(S)",
+      "help": "查看帮助(V)",
+      "about": "关于记事本(A)...",
+      "download": "下载到本地..."
+    },
+    "dialogs": {
+      "unsavedChanges": "文件已修改，是否保存更改？",
+      "saveChanges": "保存(S)",
+      "dontSave": "不保存(N)",
+      "openTitle": "打开",
+      "openPrompt": "请输入文件路径，例如：我的文档\\readme.txt",
+      "fileNotFound": "找不到文件。",
+      "cannotOpenFolder": "无法打开文件夹。",
+      "unsupportedType": "无法读取此文件类型。",
+      "fileExists": "文件 \"{{name}}\" 已存在。是否覆盖？",
+      "saveTitle": "保存",
+      "readOnly": "文件是只读的。",
+      "saveAsTitle": "另存为",
+      "saveAsPrompt": "请输入文件名和路径，例如：我的文档\\newfile.txt",
+      "pathNotFound": "路径不存在。",
+      "invalidPath": "无效的路径。"
+    },
+    "find": {
+      "title": "查找",
+      "findWhat": "查找内容：",
+      "findNext": "查找下一个",
+      "notFound": "找不到“{{query}}”。"
+    },
+    "replace": {
+      "title": "替换",
+      "findWhat": "查找内容：",
+      "replaceWith": "替换为：",
+      "replace": "替换",
+      "replaceAll": "全部替换",
+      "replacedCount": "已替换 {{count}} 处。"
+    },
+    "about": {
+      "title": "关于记事本",
+      "message": "Windows XP 记事本\n版本 1.0\n\n© 2026 Windows XP 模拟器"
+    }
+  },
+  "minesweeper": {
+    "menu": {
+      "game": "游戏(G)",
+      "help": "帮助(H)"
+    },
+    "menuItems": {
+      "new": "新游戏(N)",
+      "beginner": "初级(B)",
+      "intermediate": "中级(I)",
+      "expert": "高级(E)",
+      "exit": "退出(X)",
+      "about": "关于扫雷(A)..."
+    },
+    "aria": {
+      "newGame": "新游戏"
+    },
+    "about": {
+      "title": "关于扫雷",
+      "message": "Microsoft 扫雷\n版本 5.1",
+      "ok": "确定"
+    }
+  },
+  "fileSystem": {
+    "name": "名称",
+    "size": "大小",
+    "type": "类型",
+    "dateModified": "修改日期",
+    "folder": "文件夹",
+    "file": "文件"
+  },
+  "evidenceReport": {
+    "title": "证据报告",
+    "confidence": "置信度",
+    "note": "备注",
+    "submit": "提交报告",
+    "confidences": {
+      "proven": "已证明",
+      "probable": "高度可能",
+      "unconfirmed": "无法确认",
+      "refuted": "被反证"
+    },
+    "results": {
+      "supported": "引用证据充分支持该结论",
+      "under-supported": "方向可能正确，但证据不足",
+      "conflicted": "引用证据之间存在冲突",
+      "unknown": "尚未成立"
+    }
+  },
+  "print": {
+    "document": "文档名",
+    "status": "状态",
+    "owner": "所有者",
+    "pages": "页数",
+    "size": "大小",
+    "submitted": "提交时间",
+    "pause": "暂停",
+    "resume": "继续",
+    "cancel": "取消",
+    "noSource": "原始来源不可用",
+    "noSpoolFile": "没有后台打印文件名",
+    "statuses": {
+      "queued": "排队中",
+      "printing": "正在打印",
+      "paused": "已暂停",
+      "error": "错误",
+      "completed": "已完成",
+      "deleted": "已删除",
+      "orphaned": "孤立记录"
+    }
+  },
+  "recentDocuments": {
+    "seeded": "历史记录",
+    "runtime": "本次会话"
+  },
+  "clock": {
+    "dateTime": "日期和时间"
+  },
+  "common": {
+    "error": "错误",
+    "ok": "确定",
+    "cancel": "取消",
+    "deleteConfirmTitle": "确认删除",
+    "deleteConfirmSingle": "确定要把 \"{{name}}\" 移到回收站吗？",
+    "deleteConfirmMultiple": "确定要把选中的 {{count}} 个项目移到回收站吗？",
+    "renameTitle": "重命名",
+    "renamePrompt": "请输入新名称：",
+    "propertiesTitle": "{{name}} 属性",
+    "apply": "应用(A)"
+  },
+  "passwordDialog": {
+    "defaultTitle": "请输入密码",
+    "defaultMessage": "此内容已加密，请输入密码访问。",
+    "hintPrefix": "提示：",
+    "placeholder": "输入密码...",
+    "emptyError": "请输入密码",
+    "incorrectError": "密码错误，请重试"
+  },
+  "runDialog": {
+    "description": "键入程序、文件夹、文档或 Internet 资源的名称，Windows 将为您打开它。",
+    "open": "打开(O)：",
+    "browse": "浏览(B)...",
+    "errorTitle": "运行",
+    "errorMessage": "Windows 找不到 \"{{command}}\"。请确保输入的名称正确，然后重试。"
+  },
+  "altTab": {
+    "switchWindow": "切换窗口"
+  },
+  "screensaver": {
+    "dismissHint": "点击或按任意键继续..."
+  },
+  "errors": {
+    "program": "程序",
+    "fileNotFound": "找不到文件",
+    "fileNotFoundMessage": "找不到文件 \"{{name}}\"。\n请确认文件名是否正确，然后再试一次。",
+    "accessDenied": "拒绝访问",
+    "invalidOperation": "无效操作"
+  },
+  "settings": {
+    "language": "语言",
+    "english": "English",
+    "chinese": "简体中文"
+  },
+  "internetExplorer": {
+    "history": "历史记录",
+    "noHistory": "无历史记录",
+    "status": {
+      "done": "完成",
+      "opening": "正在打开网页",
+      "cannotDisplay": "无法显示网页"
+    },
+    "errorPage": {
+      "title": "无法显示网页",
+      "description": "您正在查找的页当前不可用。网站可能遇到支持问题，或者您需要调整浏览器设置。",
+      "diagnose": "诊断连接问题",
+      "refresh": "刷新",
+      "possibleActions": "可能的原因：",
+      "clickRefresh": "单击刷新按钮，或稍后重试。",
+      "checkAddress": "如果您在地址栏中输入了该网页的地址，请确认其拼写正确。",
+      "checkConnection": "检查您的网络连接和代理服务器设置。",
+      "notFound": "404 - 找不到网页"
+    },
+    "hao123": {
+      "searchPlaceholder": "百度一下，你就知道",
+      "searchButton": "百度搜索",
+      "banner": "hao123 网址之家 — 中国最大的上网导航，为您精选最常用的网址",
+      "setHomepage": "设为主页",
+      "slogan": "百度旗下网站 · 为中国互联网加油",
+      "tabs": {
+        "nav": "网址导航",
+        "shopping": "网购专区",
+        "ent": "影音娱乐",
+        "travel": "旅游出行",
+        "news": "资讯新闻"
+      },
+      "searchEngines": "搜索引擎",
+      "email": "常用邮箱",
+      "shopping": "购物网站",
+      "video": "视频影音",
+      "news": "新闻门户",
+      "social": "社交网络",
+      "music": "音乐欣赏",
+      "games": "游戏娱乐",
+      "travel": "旅游出行",
+      "finance": "网上银行",
+      "forums": "论坛社区",
+      "tools": "实用工具",
+      "baidu": "百度",
+      "google": "谷歌",
+      "sogou": "搜狗",
+      "yahoo": "雅虎中国",
+      "qqMail": "QQ邮箱",
+      "163Mail": "163邮箱",
+      "126Mail": "126邮箱",
+      "sinaMail": "新浪邮箱",
+      "taobao": "淘宝网",
+      "paipai": "拍拍网",
+      "dangdang": "当当网",
+      "amazon": "卓越亚马逊",
+      "eachnet": "易趣网",
+      "youku": "优酷",
+      "tudou": "土豆网",
+      "baofeng": "暴风影音",
+      "56": "56网",
+      "sohuTv": "搜狐视频",
+      "sina": "新浪",
+      "163": "网易",
+      "sohu": "搜狐",
+      "qq": "腾讯",
+      "ifeng": "凤凰网",
+      "people": "人民网",
+      "qzone": "QQ空间",
+      "xiaonei": "校内网",
+      "douban": "豆瓣",
+      "kaixin": "开心网",
+      "kugou": "酷狗音乐",
+      "qqMusic": "QQ音乐",
+      "xiami": "虾米音乐",
+      "kuwo": "酷我音乐",
+      "baiduMp3": "百度MP3",
+      "qqGames": "腾讯游戏",
+      "4399": "4399小游戏",
+      "7k7k": "7k7k小游戏",
+      "17173": "17173",
+      "the9": "第九城市",
+      "ctrip": "携程旅行",
+      "elong": "艺龙旅行",
+      "qunar": "去哪儿",
+      "airchina": "国航",
+      "icbc": "工商银行",
+      "ccb": "建设银行",
+      "cmb": "招商银行",
+      "abc": "农业银行",
+      "tieba": "百度贴吧",
+      "tianya": "天涯社区",
+      "mop": "猫扑",
+      "xici": "西祠胡同",
+      "rongshu": "榕树下",
+      "weather": "天气预报",
+      "mapBaidu": "百度地图",
+      "mapGoogle": "谷歌地图",
+      "dict": "在线词典"
+    },
+    "toolbar": {
+      "back": "后退",
+      "forward": "前进",
+      "stop": "停止",
+      "refresh": "刷新",
+      "home": "主页",
+      "search": "搜索",
+      "favorites": "收藏夹",
+      "history": "历史"
+    },
+    "addressBar": {
+      "go": "转到"
+    },
+    "menu": {
+      "file": "文件(F)",
+      "edit": "编辑(E)",
+      "view": "查看(V)",
+      "favorites": "收藏(A)",
+      "tools": "工具(T)",
+      "help": "帮助(H)"
+    },
+    "menuitems": {
+      "new": "新建(N)",
+      "open": "打开(O)...",
+      "save": "保存(S)",
+      "saveAs": "另存为(A)...",
+      "pageSetup": "页面设置(U)...",
+      "printPreview": "打印预览(V)",
+      "print": "打印(P)...",
+      "close": "关闭(C)",
+      "cut": "剪切(T)",
+      "copy": "复制(C)",
+      "paste": "粘贴(V)",
+      "selectAll": "全选(A)",
+      "find": "查找(F)...",
+      "toolbar": "工具栏(T)",
+      "statusBar": "状态栏(B)",
+      "refresh": "刷新(R)",
+      "fullScreen": "全屏(U)",
+      "textSize": "文字大小(X)",
+      "encoding": "编码(D)",
+      "addToFavorites": "添加到收藏夹(A)...",
+      "organizeFavorites": "整理收藏夹(O)...",
+      "email": "邮件和新闻(M)",
+      "internetOptions": "Internet 选项(O)...",
+      "helpTopics": "目录和索引(C)",
+      "about": "关于 Internet Explorer(A)"
+    }
+  },
+  "qq": {
+    "archive": {
+      "title": "消息记录管理器",
+      "search": "搜索消息记录",
+      "searchLabel": "查找：",
+      "searchPlaceholder": "输入关键字",
+      "import": "导入",
+      "export": "导出",
+      "delete": "删除",
+      "importHint": "导入消息记录（只读演示中不可用）",
+      "exportHint": "导出消息记录（只读演示中不可用）",
+      "contacts": "好友",
+      "groups": "群",
+      "localRecords": "本地消息记录",
+      "groupChat": "群聊天",
+      "friend": "QQ 好友",
+      "noConversation": "未选择会话",
+      "recordCount": "共 {{count}} 条消息",
+      "selectConversation": "请从左侧选择联系人或群",
+      "view": "查看：",
+      "dateRange": "日期范围",
+      "allRecords": "全部消息记录",
+      "searchResults": "找到 {{count}} 条",
+      "localOnly": "本地消息记录",
+      "noMatches": "没有找到符合条件的消息",
+      "noMatchesHint": "请更换关键字或选择其他联系人。",
+      "empty": "未挂载消息记录档案。",
+      "emptyHint": "请通过内容包提供 qqArchives 数据。",
+      "firstPage": "首页",
+      "previousPage": "上一页",
+      "nextPage": "下一页",
+      "lastPage": "末页",
+      "status": "消息记录管理器",
+      "totalMessages": "共 {{count}} 条消息",
+      "groupPrefix": "群：",
+      "attachment": "附件：{{name}}"
+    },
+    "groupChat": {
+      "windowTitle": "{{title}} - 群聊天",
+      "noConversationTitle": "群聊天",
+      "noConversationHint": "未挂载群会话。",
+      "noMessages": "暂无群消息。",
+      "identity": "{{title}}（{{count}} 人）",
+      "members": "群成员（{{count}}）",
+      "groupInfo": "群资料",
+      "groupFiles": "群共享",
+      "groupAlbum": "群相册",
+      "invite": "邀请",
+      "font": "字体",
+      "emoji": "表情",
+      "picture": "发送图片",
+      "screenshot": "屏幕捕捉",
+      "composer": "群消息",
+      "history": "消息记录(H)",
+      "messageMode": "消息模式(T)",
+      "close": "关闭(C)",
+      "send": "发送(S)"
+    },
+    "title": "QQ",
+    "login": {
+      "accountLabel": "QQ号：",
+      "accountPlaceholder": "QQ号码",
+      "passwordLabel": "密  码：",
+      "passwordPlaceholder": "请输入密码",
+      "captchaLabel": "验证码：",
+      "captchaPlaceholder": "请输入验证码",
+      "rememberPassword": "记住密码",
+      "autoLogin": "自动登录",
+      "invisibleLogin": "隐身登录",
+      "advancedSettings": "高级设置",
+      "loginButton": "登  录",
+      "cancelButton": "取  消",
+      "register": "注册新账号",
+      "forgotPassword": "找回密码",
+      "appeal": "申诉解封",
+      "enterCaptcha": "请输入验证码",
+      "captchaError": "验证码错误，请重新输入",
+      "loggingIn": "正在登录…",
+      "versionTooOld": "您使用的 QQ 版本过低，无法登录。\n请前往官网下载最新版本的 QQ。"
+    },
+    "chatTitle": "与 {{nickname}} 聊天中"
+  },
+  "safeGuard360": {
+    "title": "360 安全卫士",
+    "version": "版本 5.0.0.1001",
+    "toolbar": {
+      "computerCheckup": "电脑体检",
+      "trojanScan": "木马查杀",
+      "pluginCleanup": "插件清理",
+      "vulnerabilityFix": "漏洞修复"
+    },
+    "healthScore": "健康指数",
+    "status": {
+      "firewall": "木马防火墙",
+      "on": "已开启",
+      "vulnerabilities": "系统漏洞",
+      "viruses": "木马病毒"
+    },
+    "progress": {
+      "realtimeProtection": "实时防护"
+    },
+    "scan": {
+      "quickScan": "电脑体检",
+      "scanning": "正在体检…",
+      "resultSafe": "您的电脑很安全，请继续保持！",
+      "threatsFound": "发现 {{count}} 个木马程序！",
+      "threatPrefix": "木马",
+      "cleanButton": "立即清除",
+      "cleaned": "木马已清除，您的电脑现在很安全！"
+    },
+    "footer": {
+      "lastScan": "上次体检",
+      "never": "从未",
+      "updateTime": "特征库日期"
+    }
+  },
+  "solitaire": {
+    "won": "胜利！",
+    "menu": {
+      "game": "游戏(G)",
+      "help": "帮助(H)"
+    },
+    "menuItems": {
+      "new": "开局(D)",
+      "undo": "撤销(U)",
+      "drawOne": "一次翻一张",
+      "drawThree": "一次翻三张",
+      "exit": "退出(X)",
+      "about": "关于纸牌"
+    },
+    "status": {
+      "score": "得分：{{score}}",
+      "time": "时间：{{time}}"
+    },
+    "about": {
+      "title": "关于纸牌",
+      "message": "Microsoft 纸牌\n版本 5.1",
+      "ok": "确定"
+    }
+  },
+  "mediaPlayer": {
+    "play": "播放",
+    "pause": "暂停",
+    "stop": "停止",
+    "previous": "上一曲",
+    "next": "下一曲",
+    "playing": "正在播放",
+    "stopped": "已停止"
+  },
+  "thunder": {
+    "title": "迅雷 5",
+    "version": "5.9 稳定版",
+    "newTask": "新建",
+    "start": "开始",
+    "pause": "暂停",
+    "delete": "删除",
+    "columnName": "文件名",
+    "columnProgress": "进度",
+    "columnSpeed": "速度",
+    "columnStatus": "状态",
+    "columnSize": "大小",
+    "statusWaiting": "等待中",
+    "statusDownloading": "下载中",
+    "statusPaused": "已暂停",
+    "statusCompleted": "已完成",
+    "statusError": "失败",
+    "empty": "暂无下载任务",
+    "statusCount": "共 {{count}} 个任务",
+    "statusSpeed": "下载速度"
+  },
+  "kugouMusic": {
+    "title": "酷狗音乐",
+    "version": "2010 正式版",
+    "playlist": "播放列表",
+    "search": "搜索",
+    "onlineMusic": "在线音乐",
+    "columnTitle": "歌曲",
+    "columnArtist": "歌手",
+    "columnDuration": "时长",
+    "previous": "上一首",
+    "next": "下一首",
+    "playPause": "播放/暂停",
+    "volume": "音量",
+    "nowPlaying": "正在播放：{{title}} - {{artist}}",
+    "stopped": "已停止",
+    "statusCount": "共 {{count}} 首",
+    "statusPlaying": "正在播放",
+    "statusReady": "准备就绪"
+  },
+  "ttplayer": {
+    "title": "千千静听",
+    "version": "5.0 经典版",
+    "playlist": "列表",
+    "lyrics": "歌词秀",
+    "about": "关于",
+    "close": "关闭",
+    "add": "添加",
+    "remove": "删除",
+    "previous": "上一首",
+    "next": "下一首",
+    "playPause": "播放/暂停",
+    "stop": "停止",
+    "volume": "音量",
+    "modeLoop": "列表循环",
+    "modeOne": "单曲循环",
+    "aboutRef": "布局参考开源复刻项目 haixiangyan/ttplayer（MIT License，作者 haixiangyan）。",
+    "aboutCredit": "界面与图标为自绘致敬；「千千静听」素材与商标版权归原作者所有，示例歌词为原创占位文本。",
+    "statusCount": "共 {{count}} 首",
+    "statusPlaying": "正在播放",
+    "statusReady": "准备就绪"
+  },
+  "photoViewer": {
+    "title": "Windows 图片和传真查看器",
+    "noImageSelected": "未选择图片",
+    "view": "查看",
+    "viewProperties": "查看属性",
+    "ready": "就绪"
+  },
+  "fileProperties": {
+    "unknown": "未知",
+    "general": "常规",
+    "summary": "摘要",
+    "fileType": "文件类型",
+    "location": "位置",
+    "desktop": "桌面",
+    "size": "大小",
+    "bytes": "{{count}} 字节",
+    "objectCount": "{{count}} 个对象",
+    "created": "创建时间",
+    "modified": "修改时间",
+    "accessed": "访问时间",
+    "status": "状态",
+    "encrypted": "已加密",
+    "damaged": "已损坏",
+    "image": "图像",
+    "cameraModel": "相机型号",
+    "manufacturer": "制造商",
+    "shootingParameters": "拍摄参数",
+    "aperture": "光圈值",
+    "exposureTime": "曝光时间",
+    "seconds": "{{value}} 秒",
+    "isoSpeed": "ISO 速度",
+    "focalLength": "焦距",
+    "origin": "来源",
+    "dateTaken": "拍摄日期",
+    "noSummary": "无可用摘要信息"
+  },
+  "paint": {
+    "untitled": "无标题",
+    "untitledFile": "未命名.png",
+    "clear": "清空",
+    "menu": {
+      "file": "文件(F)",
+      "edit": "编辑(E)",
+      "view": "查看(V)",
+      "help": "帮助(H)"
+    },
+    "menuitems": {
+      "new": "新建(N)",
+      "open": "打开(O)...",
+      "save": "保存(S)",
+      "saveAs": "另存为(A)...",
+      "exit": "退出(X)",
+      "undo": "撤销(U)",
+      "cut": "剪切(T)",
+      "copy": "复制(C)",
+      "paste": "粘贴(P)",
+      "delete": "删除(L)",
+      "selectAll": "全选(A)",
+      "toolbox": "工具箱(T)",
+      "colorBox": "颜料盒(C)",
+      "statusBar": "状态栏(S)",
+      "helpTopics": "帮助主题(H)",
+      "about": "关于画图(A)..."
+    },
+    "dialogs": {
+      "loadFailed": "无法加载图片。",
+      "unsavedChanges": "文件已修改，是否保存更改？",
+      "openTitle": "打开",
+      "openPrompt": "请输入图片路径，例如：我的文档\\我的图片\\image.png",
+      "fileNotFound": "找不到文件。",
+      "cannotOpenFolder": "无法打开文件夹。",
+      "unsupportedType": "无法读取此文件类型。",
+      "saveTitle": "保存",
+      "readOnly": "文件是只读的。",
+      "saveAsTitle": "另存为",
+      "saveAsPrompt": "请输入文件名和路径：",
+      "pathNotFound": "路径不存在。",
+      "invalidPath": "无效的路径。",
+      "fileExists": "文件 \"{{name}}\" 已存在。是否覆盖？"
+    }
+  },
+  "wpsOffice": {
+    "title": "WPS Office",
+    "menu": {
+      "file": "文件(F)",
+      "edit": "编辑(E)",
+      "view": "视图(V)",
+      "insert": "插入(I)",
+      "format": "格式(O)",
+      "tools": "工具(T)",
+      "help": "帮助(H)"
+    },
+    "toolbar": {
+      "new": "新建",
+      "open": "打开",
+      "save": "保存",
+      "print": "打印",
+      "preview": "预览"
+    },
+    "documentTitle": "我的文档",
+    "paragraph1": "欢迎使用 WPS Office 文字处理软件。",
+    "paragraph2": "这是一款经典的办公套件界面，还原 2000 年代中国网民熟悉的 WPS 体验。",
+    "paragraph3": "您可以在此编辑文档、调整格式，感受那个年代的办公氛围。",
+    "status": {
+      "ready": "就绪",
+      "zoom": "缩放 {{zoom}}%"
+    }
+  },
+  "baofengPlayer": {
+    "title": "暴风影音",
+    "version": "3.6 智能版",
+    "brand": "暴风影音",
+    "openFileHint": "点击打开文件",
+    "playing": "正在播放",
+    "play": "播放",
+    "pause": "暂停",
+    "stop": "停止",
+    "fullscreen": "全屏",
+    "playlist": "播放列表",
+    "volumeLabel": "音量",
+    "status": {
+      "ready": "就绪",
+      "playing": "正在播放",
+      "paused": "已暂停"
+    }
+  },
+  "helpAndSupport": {
+    "title": "帮助和支持中心",
+    "topics": {
+      "welcome": "欢迎使用",
+      "getting-started": "入门指南",
+      "desktop": "桌面介绍",
+      "explorer": "文件资源管理器",
+      "internet": "Internet Explorer",
+      "applications": "应用程序",
+      "settings": "系统设置",
+      "lessons": "引导课程"
+    },
+    "lessons": {
+      "title": "引导课程",
+      "intro": "选择一节课，一步步带你完成任务。桌面会引导你，并在你完成每一步后自动推进。"
+    },
+    "content": {
+      "welcome": {
+        "title": "欢迎使用 Windows XP 帮助和支持中心",
+        "body": "欢迎使用 Windows XP 模拟器。这个经典桌面环境完全运行在浏览器中。\n\n您可以浏览文件系统、访问网页、运行应用并使用熟悉的 Windows XP 控件。"
+      },
+      "gettingStarted": {
+        "title": "入门指南",
+        "body": "请尝试以下常用操作：\n\n1. 双击桌面图标打开应用\n2. 使用开始菜单查找程序\n3. 拖动标题栏移动窗口\n4. 调整支持缩放的窗口\n5. 使用任务栏管理打开的窗口"
+      },
+      "desktop": {
+        "title": "桌面介绍",
+        "body": "Windows XP 桌面包含：\n\n- 代表程序、文件夹和文件的图标\n- 显示窗口与通知图标的任务栏\n- 访问程序和系统功能的开始菜单\n- 可配置的桌面背景"
+      },
+      "explorer": {
+        "title": "文件资源管理器",
+        "body": "文件资源管理器用于管理文件和文件夹。\n\n您可以浏览目录、创建和重命名项目、将文件移入回收站并查看属性。"
+      },
+      "internet": {
+        "title": "Internet Explorer",
+        "body": "Internet Explorer 是内置网页浏览器。\n\n可使用地址栏、导航按钮、浏览历史、收藏夹和主页按钮访问可用网页。"
+      },
+      "applications": {
+        "title": "应用程序",
+        "body": "中文桌面包含记事本、画图、计算器、扫雷、纸牌、Internet Explorer，以及 QQ、360 安全卫士、迅雷、WPS Office 等本地时代应用。"
+      },
+      "settings": {
+        "title": "系统设置",
+        "body": "可从开始菜单打开控制面板，调整显示、声音、鼠标和系统设置。更改系统语言后需要重新启动 Windows。"
+      }
+    }
+  },
+  "mobileWarning": {
+    "title": "触摸操作",
+    "message": "点按即单击，双击可打开，长按弹出右键菜单。拖动标题栏可移动窗口。",
+    "gotIt": "知道了",
+    "rotateHint": "横屏可获得更大的视图。"
+  },
+  "storage": {
+    "errorTitle": "Windows XP",
+    "quotaExceeded": "磁盘空间不足，无法保存你的更改。请清空回收站或删除一些文件释放空间，否则最近的更改可能在重新启动后丢失。"
+  },
+  "recycleBinNotices": {
+    "restoreFallbackTitle": "回收站",
+    "restoreFallbackMessage": "\"{{name}}\"的原始文件夹已不存在，已将其还原到桌面。"
+  },
+  "deductionSheet": {
+    "title": "推理",
+    "verify": "核验",
+    "choose": "— 选择 —",
+    "wordBank": "词库",
+    "solved": "案件了结——所有推理均已核验。"
+  },
+  "stickyNote": {
+    "defaultTitle": "便笺",
+    "dismiss": "撕掉"
+  },
+  "evidenceBoard": {
+    "tray": "证据",
+    "unpin": "从板上移除",
+    "linkHint": "点一张卡片，再点另一张，把它们用线连起来。"
+  },
+  "searchOracle": {
+    "brand": "搜索",
+    "placeholder": "搜索网页",
+    "go": "百度一下",
+    "stat": "找到 {{count}} 条关于“{{query}}”的结果",
+    "empty": "没有找到与“{{query}}”相关的结果",
+    "noResults": "抱歉，没有找到相关网页。"
+  },
+  "lesson": {
+    "close": "关闭课程",
+    "progress": "第 {{current}} / {{total}} 步",
+    "done": "课程完成！",
+    "score": "得分：{{score}} / 100",
+    "watch": {
+      "pause": "⏸ 暂停",
+      "resume": "▶ 继续"
+    },
+    "notepad": {
+      "title": "课程：记事本入门",
+      "step1": "从「开始」菜单打开记事本。",
+      "hint1a": "点击左下角的「开始」按钮。",
+      "hint1b": "记事本在「所有程序 → 附件」里。",
+      "step2": "输入一小段文字，然后保存到「我的文档」。",
+      "hint2": "打开「文件」菜单选择「保存」，再确认保存位置。"
+    }
+  },
+  "setup": {
+    "welcomeTitle": "欢迎使用 {{product}} 安装向导",
+    "welcomeMessage": "此向导将引导您完成 {{product}} 的安装。点击「下一步」继续。",
+    "licenseTitle": "许可协议",
+    "licenseAccept": "我接受许可协议中的条款",
+    "pathTitle": "选择安装位置",
+    "pathLabel": "安装到：",
+    "browse": "浏览...",
+    "progressTitle": "正在安装...",
+    "copying": "正在复制：{{file}}",
+    "finishTitle": "安装完成",
+    "finishMessage": "{{product}} 已成功安装。",
+    "back": "< 上一步",
+    "next": "下一步 >",
+    "cancel": "取消",
+    "finish": "完成"
+  },
+  "addRemovePrograms": {
+    "title": "添加或删除程序",
+    "currentlyInstalled": "当前已安装的程序",
+    "addNewPrograms": "添加新程序",
+    "windowsComponents": "添加/删除 Windows 组件",
+    "categories": {
+      "installed": "更改或删除程序",
+      "add": "添加新程序",
+      "components": "添加/删除 Windows 组件"
+    },
+    "changeRemove": "更改/删除",
+    "noPrograms": "当前没有已安装的程序。",
+    "size": "大小：",
+    "installedOn": "安装日期：",
+    "publisher": "发布者：",
+    "version": "版本：",
+    "confirmUninstall": "确定要卸载 {{product}} 吗？"
+  }
+}

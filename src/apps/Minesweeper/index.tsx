@@ -1,0 +1,502 @@
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  XPMenuBar as SharedMenuBar,
+  XPMenuBarItem as SharedMenuButton,
+  XPMenuSlot as SharedMenuSlot,
+  XPMenuDropdown as SharedDropdown,
+  XPMenuDropdownItem as SharedDropdownItem,
+  XPMenuSeparator as SharedMenuSeparator,
+  XPMenuMark as SharedMenuMark,
+} from '../../components/XPMenuBar';
+import { useTranslation } from 'react-i18next';
+import { useWindowManagerActions } from '../../context/WindowManagerContext';
+import { useWindowId } from '../../context/WindowIdContext';
+import { useShortcut } from '../../context/KeymapContext';
+import { useXPEventBus } from '../../context/EventBusContext';
+import { useApp } from '../../hooks/useApp';
+import {
+  numberSprites,
+  digitSprites,
+  configs,
+  difficultyKeys,
+  empty,
+  flag,
+  mineCeil,
+  mineDeath,
+  misflagged,
+  question,
+  checked,
+  smile,
+  ohh,
+  dead,
+  win,
+} from './constants';
+import {
+  createBoard,
+  cloneBoard,
+  getNeighbors,
+  placeMines,
+  revealSafeRegion,
+  revealLoss,
+  isWon,
+  flagAllMines,
+  formatCounter,
+} from './game';
+import {
+  Wrap,
+  MenuCheck,
+  GamePanel,
+  ScoreBar,
+  Counter,
+  Digit,
+  FaceOuter,
+  FaceButton,
+  FaceIcon,
+  Board,
+  Cell,
+  CoveredBackground,
+  RevealedBackground,
+  CellIcon,
+} from './styled';
+import type { Difficulty, GameStatus, OpenMenu, CellData } from './types';
+
+const Minesweeper = ({ windowId }: { windowId?: string }) => {
+  const { t, i18n } = useTranslation();
+  const { closeWindow, resizeWindow, setWindowTitle } = useWindowManagerActions();
+  // The registry does not inject a windowId prop - fall back to the window
+  // context so the fit-to-board resize actually runs (#292).
+  const contextWindowId = useWindowId();
+  const wid = windowId ?? contextWindowId;
+  const api = useApp(wid);
+  const bus = useXPEventBus();
+  const [difficulty, setDifficulty] = useState<Difficulty>('beginner');
+  const [board, setBoard] = useState<CellData[][]>([]);
+  const [flags, setFlags] = useState(0);
+  const [time, setTime] = useState(0);
+  const [status, setStatus] = useState<GameStatus>('new');
+  const [firstClick, setFirstClick] = useState(true);
+  const [face, setFace] = useState<'smile' | 'ohh' | 'dead' | 'win'>('smile');
+  const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const pendingChordRef = useRef<string | null>(null);
+  // Mirror `time` in a ref so game:win can report the elapsed seconds without
+  // rebuilding the win/loss callbacks every tick.
+  const timeRef = useRef(0);
+
+  const config = configs[difficulty];
+
+  // Render-time state adjustment (React docs pattern): a difficulty switch
+  // rebuilds the board for the new config in the same render pass, so the
+  // layout effect below always measures a board that matches the grid. Doing
+  // it post-commit instead measured the stale board against the new config —
+  // and for intermediate↔expert (both 16 rows) board.length never changed, so
+  // no re-measure happened at all and the window kept the wrong size.
+  const [lastDifficulty, setLastDifficulty] = useState(difficulty);
+  if (lastDifficulty !== difficulty) {
+    setLastDifficulty(difficulty);
+    setBoard(createBoard(config));
+    setFlags(0);
+    setTime(0);
+    setStatus('new');
+    setFirstClick(true);
+    setFace('smile');
+    pendingChordRef.current = null;
+  }
+
+  useEffect(() => {
+    timeRef.current = time;
+  }, [time]);
+
+  const initBoard = useCallback(() => {
+    setBoard(createBoard(configs[difficulty]));
+    setFlags(0);
+    setTime(0);
+    setStatus('new');
+    setFirstClick(true);
+    setFace('smile');
+    pendingChordRef.current = null;
+    bus.emit({ type: 'game:start', appId: 'Minesweeper', difficulty });
+  }, [difficulty, bus]);
+
+  useEffect(() => {
+    initBoard();
+  }, [initBoard]);
+
+  useEffect(() => {
+    if (wid) setWindowTitle(wid, t('apps.minesweeper'));
+  }, [i18n.language, setWindowTitle, t, wid]);
+
+  useEffect(() => {
+    if (status !== 'playing' || time >= 999) return undefined;
+
+    const timer = window.setInterval(() => {
+      setTime(seconds => Math.min(999, seconds + 1));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [status, time]);
+
+  useEffect(() => {
+    const closeMenuWhenClickingElsewhere = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', closeMenuWhenClickingElsewhere);
+    return () => document.removeEventListener('mousedown', closeMenuWhenClickingElsewhere);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!wid || !contentRef.current || board.length === 0) return;
+
+    // Window chrome (see WindowChrome.tsx): WindowBody has 3px side margins,
+    // the title bar is 28px tall, and the container has 3px bottom padding.
+    resizeWindow(wid, contentRef.current.offsetWidth + 6, contentRef.current.offsetHeight + 31);
+  }, [board.length, difficulty, resizeWindow, wid]);
+
+  const endWithLoss = useCallback(
+    (nextBoard: CellData[][], row: number, col: number) => {
+      revealLoss(nextBoard, row, col);
+      setStatus('lost');
+      setFace('dead');
+      bus.emit({ type: 'game:lose', appId: 'Minesweeper', difficulty });
+    },
+    [difficulty, bus]
+  );
+
+  const endWithWin = useCallback(
+    (nextBoard: CellData[][]) => {
+      flagAllMines(nextBoard);
+      setFlags(configs[difficulty].mines);
+      setStatus('won');
+      setFace('win');
+      bus.emit({
+        type: 'game:win',
+        appId: 'Minesweeper',
+        difficulty,
+        timeMs: timeRef.current * 1000,
+      });
+    },
+    [difficulty, bus]
+  );
+
+  const revealCell = useCallback(
+    (row: number, col: number) => {
+      if (status === 'won' || status === 'lost') return;
+
+      setBoard(previousBoard => {
+        const target = previousBoard[row]?.[col];
+        if (!target || target.isRevealed || target.isFlagged) return previousBoard;
+
+        const nextBoard = cloneBoard(previousBoard);
+        if (firstClick) {
+          placeMines(nextBoard, row, col, config);
+          setFirstClick(false);
+        }
+
+        const selected = nextBoard[row][col];
+        if (selected.isMine) {
+          endWithLoss(nextBoard, row, col);
+          return nextBoard;
+        }
+
+        revealSafeRegion(nextBoard, row, col, config);
+        if (isWon(nextBoard)) {
+          endWithWin(nextBoard);
+        } else if (firstClick) {
+          setStatus('playing');
+        }
+
+        return nextBoard;
+      });
+    },
+    [config, endWithLoss, endWithWin, firstClick, status]
+  );
+
+  const chordCell = useCallback(
+    (row: number, col: number) => {
+      if (status !== 'playing') return;
+
+      setBoard(previousBoard => {
+        const selected = previousBoard[row]?.[col];
+        if (!selected?.isRevealed || selected.value <= 0) return previousBoard;
+
+        const neighbors = getNeighbors(row, col, config);
+        const flagCount = neighbors.filter(
+          ([neighborRow, neighborCol]) => previousBoard[neighborRow][neighborCol].isFlagged
+        ).length;
+        if (flagCount !== selected.value) return previousBoard;
+
+        const nextBoard = cloneBoard(previousBoard);
+        const mine = neighbors.find(([neighborRow, neighborCol]) => {
+          const neighbor = nextBoard[neighborRow][neighborCol];
+          return neighbor.isMine && !neighbor.isFlagged;
+        });
+
+        if (mine) {
+          endWithLoss(nextBoard, mine[0], mine[1]);
+          return nextBoard;
+        }
+
+        neighbors.forEach(([neighborRow, neighborCol]) => {
+          revealSafeRegion(nextBoard, neighborRow, neighborCol, config);
+        });
+
+        if (isWon(nextBoard)) endWithWin(nextBoard);
+        return nextBoard;
+      });
+    },
+    [config, endWithLoss, endWithWin, status]
+  );
+
+  const handleRightClick = useCallback(
+    (event: React.MouseEvent, row: number, col: number) => {
+      event.preventDefault();
+      if (status === 'won' || status === 'lost') return;
+
+      setBoard(previousBoard => {
+        const nextBoard = cloneBoard(previousBoard);
+        const cell = nextBoard[row][col];
+        if (cell.isRevealed) return previousBoard;
+
+        if (!cell.isFlagged && !cell.isQuestioned) {
+          cell.isFlagged = true;
+          setFlags(currentFlags => currentFlags + 1);
+        } else if (cell.isFlagged) {
+          cell.isFlagged = false;
+          cell.isQuestioned = true;
+          setFlags(currentFlags => currentFlags - 1);
+        } else {
+          cell.isQuestioned = false;
+        }
+
+        return nextBoard;
+      });
+    },
+    [status]
+  );
+
+  const handleCellMouseDown = useCallback(
+    (event: React.MouseEvent, row: number, col: number, cell: CellData) => {
+      if (status === 'won' || status === 'lost') return;
+
+      if ((event.buttons & 3) === 3 && cell.isRevealed && cell.value > 0) {
+        event.preventDefault();
+        pendingChordRef.current = `${row}-${col}`;
+        setFace('ohh');
+        return;
+      }
+
+      if (event.button === 0) setFace('ohh');
+    },
+    [status]
+  );
+
+  const handleCellMouseUp = useCallback(
+    (row: number, col: number) => {
+      const chordKey = `${row}-${col}`;
+      if (pendingChordRef.current === chordKey) {
+        pendingChordRef.current = null;
+        chordCell(row, col);
+      }
+
+      if (status !== 'won' && status !== 'lost') setFace('smile');
+    },
+    [chordCell, status]
+  );
+
+  const resetGame = useCallback(() => {
+    setOpenMenu(null);
+    initBoard();
+  }, [initBoard]);
+
+  const selectDifficulty = useCallback((nextDifficulty: Difficulty) => {
+    setDifficulty(nextDifficulty);
+    setOpenMenu(null);
+  }, []);
+
+  const exitGame = useCallback(() => {
+    setOpenMenu(null);
+    if (wid) closeWindow(wid);
+  }, [closeWindow, wid]);
+
+  // App-scoped shortcuts via the keymap (#132) — fire only when Minesweeper is
+  // the focused window (was a global listener that ran even when unfocused).
+  const mineApp = { scope: 'app' as const, appId: 'Minesweeper' };
+  useShortcut({ id: 'minesweeper.newGame', combo: 'F2', ...mineApp, label: 'New game' }, () =>
+    resetGame()
+  );
+  useShortcut({ id: 'minesweeper.gameMenu', combo: 'Alt+G', ...mineApp, label: 'Game menu' }, () =>
+    setOpenMenu(current => (current === 'game' ? null : 'game'))
+  );
+  useShortcut({ id: 'minesweeper.helpMenu', combo: 'Alt+H', ...mineApp, label: 'Help menu' }, () =>
+    setOpenMenu(current => (current === 'help' ? null : 'help'))
+  );
+  useShortcut(
+    { id: 'minesweeper.dismiss', combo: 'Escape', ...mineApp, preventDefault: false },
+    () => {
+      setOpenMenu(null);
+    }
+  );
+
+  const faceSrc = face === 'smile' ? smile : face === 'ohh' ? ohh : face === 'dead' ? dead : win;
+  const mineCounter = formatCounter(config.mines - flags);
+  const timeCounter = formatCounter(time);
+
+  const renderCounter = (counter: string) =>
+    counter
+      .split('')
+      .map((digit, index) => (
+        <Digit key={`${digit}-${index}`} src={digitSprites[digit]} alt="" draggable={false} />
+      ));
+
+  return (
+    <Wrap
+      ref={contentRef}
+      onContextMenu={event => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+    >
+      <SharedMenuBar ref={menuRef}>
+        <SharedMenuSlot>
+          <SharedMenuButton
+            type="button"
+            $active={openMenu === 'game'}
+            onClick={() => setOpenMenu(current => (current === 'game' ? null : 'game'))}
+          >
+            {t('minesweeper.menu.game')}
+          </SharedMenuButton>
+          {openMenu === 'game' && (
+            <SharedDropdown role="menu">
+              <SharedDropdownItem type="button" role="menuitem" onClick={resetGame}>
+                <SharedMenuMark />
+                {t('minesweeper.menuItems.new')}
+              </SharedDropdownItem>
+              <SharedMenuSeparator />
+              {difficultyKeys.map(option => (
+                <SharedDropdownItem
+                  key={option}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={difficulty === option}
+                  onClick={() => selectDifficulty(option)}
+                >
+                  <SharedMenuMark>
+                    {difficulty === option && <MenuCheck src={checked} alt="" />}
+                  </SharedMenuMark>
+                  {t(`minesweeper.menuItems.${option}`)}
+                </SharedDropdownItem>
+              ))}
+              <SharedMenuSeparator />
+              <SharedDropdownItem type="button" role="menuitem" onClick={exitGame}>
+                <SharedMenuMark />
+                {t('minesweeper.menuItems.exit')}
+              </SharedDropdownItem>
+            </SharedDropdown>
+          )}
+        </SharedMenuSlot>
+        <SharedMenuSlot>
+          <SharedMenuButton
+            type="button"
+            $active={openMenu === 'help'}
+            onClick={() => setOpenMenu(current => (current === 'help' ? null : 'help'))}
+          >
+            {t('minesweeper.menu.help')}
+          </SharedMenuButton>
+          {openMenu === 'help' && (
+            <SharedDropdown role="menu">
+              <SharedDropdownItem
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpenMenu(null);
+                  // Shared engine modal (XPAlert) - floats above the window like
+                  // real XP's About box instead of a clipped in-window overlay.
+                  void api.dialog.alert({
+                    title: t('minesweeper.about.title'),
+                    message: t('minesweeper.about.message'),
+                    type: 'info',
+                  });
+                }}
+              >
+                <SharedMenuMark />
+                {t('minesweeper.menuItems.about')}
+              </SharedDropdownItem>
+            </SharedDropdown>
+          )}
+        </SharedMenuSlot>
+      </SharedMenuBar>
+
+      <GamePanel>
+        <ScoreBar>
+          <Counter>{renderCounter(mineCounter)}</Counter>
+          <FaceOuter>
+            <FaceButton
+              type="button"
+              onClick={resetGame}
+              aria-label={t('minesweeper.aria.newGame')}
+            >
+              <FaceIcon src={faceSrc} alt="" draggable={false} />
+            </FaceButton>
+          </FaceOuter>
+          <Counter>{renderCounter(timeCounter)}</Counter>
+        </ScoreBar>
+
+        <Board $cols={config.cols} $rows={config.rows}>
+          {board.map((row, rowIndex) =>
+            row.map((cell, colIndex) => {
+              const isWrongFlag = status === 'lost' && cell.isFlagged && !cell.isMine;
+              const isVisibleMine = status === 'lost' && cell.isMine && !cell.isFlagged;
+              const isRevealed = cell.isRevealed || isWrongFlag;
+              let icon: string | null = null;
+
+              if (cell.isExploded) {
+                icon = mineDeath;
+              } else if (isWrongFlag) {
+                icon = misflagged;
+              } else if (isVisibleMine) {
+                icon = mineCeil;
+              } else if (cell.isRevealed && cell.value > 0) {
+                icon = numberSprites[cell.value];
+              } else if (cell.isFlagged) {
+                icon = flag;
+              } else if (cell.isQuestioned) {
+                icon = question;
+              } else if (cell.isRevealed) {
+                icon = empty;
+              }
+
+              return (
+                <Cell
+                  key={`${rowIndex}-${colIndex}`}
+                  type="button"
+                  data-testid={`minesweeper-cell-${rowIndex}-${colIndex}`}
+                  data-revealed={cell.isRevealed}
+                  data-flagged={cell.isFlagged}
+                  $covered={!isRevealed}
+                  onClick={() => revealCell(rowIndex, colIndex)}
+                  onContextMenu={event => handleRightClick(event, rowIndex, colIndex)}
+                  onMouseDown={event => handleCellMouseDown(event, rowIndex, colIndex, cell)}
+                  onMouseUp={() => handleCellMouseUp(rowIndex, colIndex)}
+                  onMouseLeave={() => {
+                    pendingChordRef.current = null;
+                    if (status !== 'won' && status !== 'lost') setFace('smile');
+                  }}
+                >
+                  {!isRevealed && <CoveredBackground />}
+                  {isRevealed && <RevealedBackground />}
+                  {icon && <CellIcon src={icon} alt="" draggable={false} />}
+                </Cell>
+              );
+            })
+          )}
+        </Board>
+      </GamePanel>
+    </Wrap>
+  );
+};
+
+export default Minesweeper;

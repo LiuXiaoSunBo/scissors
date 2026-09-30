@@ -1,0 +1,1932 @@
+# Scenario pattern library (#239)
+
+Recurring, named recipes for scenario and content-pack authoring — the corpus
+both human authors and AI assistants draft from. Each pattern states its
+**intent**, shows the **structure**, gives a **copyable recipe**, and names the
+**anti-pattern** that breaks it. The semantics reference is
+[`SCENARIOS.md`](./SCENARIOS.md); the design rationale behind each mechanic is
+[`PUZZLE-DESIGN.md`](./PUZZLE-DESIGN.md); the guided authoring workflow is the
+repo skill [`.claude/skills/scenario/`](../.claude/skills/scenario/SKILL.md).
+
+## How this document stays honest (CI contract)
+
+The governing principle of AI-assisted authoring is **"AI drafts, deterministic
+tools adjudicate"** — and the pattern library itself is held to it:
+
+- Every fenced <code>```json</code> block in this file is a **complete,
+self-contained scenario or content pack**. CI extracts each block and runs the
+real adjudicator (`xp-scenario lint`) over it — `npm run patterns:check`,
+wired into `npm run scenario:ci`. The library is held to a stricter bar than
+  user scenarios: **zero errors _and_ zero warnings**. A snippet that stops
+  linting clean fails the build, so the library cannot rot as the schema/event
+  catalog evolves.
+- Fenced <code>```jsonc</code> blocks are **illustrative fragments and
+anti-examples** — they carry comments, may be deliberately wrong, and are
+*not* linted. Never copy a `jsonc` block as-is.
+
+When you add a pattern: write the recipe as strict JSON, keep it minimal but
+complete, then run `npm run patterns:check` before committing.
+
+## The five outlets (house rule)
+
+Draft time is a routing problem: every piece of content has exactly one right
+home. Putting it anywhere else is drift the toolchain can't defend.
+
+| #   | Content kind                                            | Outlet                                                            |
+| --- | ------------------------------------------------------- | ----------------------------------------------------------------- |
+| ①   | **Logic** — gating, flags, triggers, puzzle graph       | the scenario JSON (`triggers` / `PuzzleGraph`)                    |
+| ②   | **Large content** — fake webpages, long docs, media     | files behind `ContentRef` (`assets` manifest + `{ asset }` refs)  |
+| ③   | **Beat text** — dialogue, balloons, notes               | per-culture `strings` tables (#207), referenced via `*Key` fields |
+| ④   | **AI-buddy definitions** — persona / context / fallback | the `provider: "chat"` branch inside scenario data (#148)         |
+| ⑤   | **Era prompt templates** — generated-web tone           | the culture package corpus (`culture.webContent`, #149)           |
+
+The scenario JSON ends up holding only logic; everything else is referenced.
+
+---
+
+# Part I — Story patterns (scenario logic)
+
+## Pattern 1 — the hint ladder（提示阶梯, M12）
+
+**Intent.** The anti-stuck contract: when the player flails (repeated password
+failures) or stalls (idle periods), escalate hints — cheap nudge first, near-spoiler
+last. Every critical-path puzzle must carry one; the puzzle-graph linter
+_errors_ on a `gate` node without hints.
+
+**Structure.**
+
+```mermaid
+flowchart LR
+  F[password:fail ×2] --> H1[rung 1: nudge]
+  F2[password:fail ×4] --> H2[rung 2: near-spoiler]
+  S[file:unlock] --> X[solved — ladder disarms]
+```
+
+**Recipe.** In graph authoring prefer `ladderKeys({ fails: 2 }, 'k1', 'k2')` —
+it compiles to exactly this shape. Hand-written Layer-1 form:
+
+```json
+{
+  "id": "pattern-hint-ladder",
+  "strings": {
+    "zh": {
+      "hint.title": "提示",
+      "hint.1": "线索就在你已经打开过的东西里。",
+      "hint.2": "聊天记录里提到的那个日期——就是密码。"
+    },
+    "en": {
+      "hint.title": "Hint",
+      "hint.1": "The clue is in something you already opened.",
+      "hint.2": "The date mentioned in the chat log — that is the password."
+    }
+  },
+  "triggers": [
+    {
+      "id": "solved",
+      "on": "file:unlock",
+      "when": { "event": { "name": "私人" } },
+      "once": true,
+      "do": [{ "setFlag": "folder_open" }]
+    },
+    {
+      "id": "hint-rung-1",
+      "on": "password:fail",
+      "when": {
+        "all": [
+          { "not": { "flag": "folder_open" } },
+          { "count": { "type": "password:fail", "match": { "name": "私人" } }, "gte": 2 }
+        ]
+      },
+      "once": true,
+      "do": [{ "notify": { "titleKey": "hint.title", "bodyKey": "hint.1", "timeout": 10000 } }]
+    },
+    {
+      "id": "hint-rung-2",
+      "on": "password:fail",
+      "when": {
+        "all": [
+          { "not": { "flag": "folder_open" } },
+          { "count": { "type": "password:fail", "match": { "name": "私人" } }, "gte": 4 }
+        ]
+      },
+      "once": true,
+      "do": [{ "notify": { "titleKey": "hint.title", "bodyKey": "hint.2", "timeout": 10000 } }]
+    }
+  ]
+}
+```
+
+Points that make it a ladder, not a faucet: each rung is `once`, each rung is
+gated `not(solved)` so hints stop the moment the door opens, and the `match`
+narrows the count to _this_ lock so failures elsewhere don't leak in.
+
+**Anti-pattern.** A hint that never disarms — omitting the `not` guard lets the
+balloon fire after the puzzle is solved (a count predicate stays ≥ 2 forever):
+
+```jsonc
+{
+  "on": "password:fail",
+  // ✗ no "not solved" guard, no once — spams forever, even post-solve
+  "when": { "count": { "type": "password:fail" }, "gte": 2 },
+  "do": [{ "notify": { "body": "……" } }],
+}
+```
+
+## Pattern 2 — the act gate（幕间门）
+
+**Intent.** A story bottleneck: everything in act 2 stays inert until the
+player crosses one authored threshold. One `act` flag carries the story's
+coarse position; every act-scoped trigger checks it; the curtain-rise beat
+listens for the flag _change_ itself.
+
+**Structure.**
+
+```mermaid
+flowchart LR
+  A1[act = 1 beats] --> G{finish-act1<br/>setFlag act = 2}
+  G --> C[flag:change → curtain beat]
+  C --> A2[act = 2 beats<br/>all gated on act eq 2]
+```
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-act-gate",
+  "initialFlags": { "act": 1 },
+  "strings": {
+    "zh": { "act2.title": "第二幕", "act2.body": "D 盘多了一个能打开的文件夹。" },
+    "en": { "act2.title": "Act Two", "act2.body": "A folder on the D: drive can be opened now." }
+  },
+  "triggers": [
+    {
+      "id": "finish-act1",
+      "on": "file:open",
+      "when": { "all": [{ "flag": "act", "eq": 1 }, { "event": { "name": "日记.txt" } }] },
+      "once": true,
+      "do": [{ "setFlag": "act", "value": 2 }]
+    },
+    {
+      "id": "act2-curtain",
+      "on": "flag:change",
+      "when": { "event": { "flag": "act", "value": 2 } },
+      "once": true,
+      "do": [
+        { "notify": { "titleKey": "act2.title", "bodyKey": "act2.body" } },
+        { "unlock": ["我的电脑", "本地磁盘 (D:)", "第二幕"] }
+      ]
+    },
+    {
+      "id": "act2-beat",
+      "on": "file:open",
+      "when": { "all": [{ "flag": "act", "eq": 2 }, { "event": { "name": "线索.txt" } }] },
+      "once": true,
+      "do": [{ "setFlag": "act", "value": 3 }]
+    }
+  ]
+}
+```
+
+The `flag:change` trigger (#207) fires only on a _real_ change, so the curtain
+can't loop; separating "cross the threshold" from "raise the curtain" keeps the
+transition in one place even when several paths can finish act 1.
+
+**Anti-pattern.** Gating act-2 beats on the _event that ended act 1_ instead of
+the act flag — any second path into act 2 (a debug seek, an added shortcut
+puzzle) silently strands every downstream beat. Gate on state, not on history.
+
+In graph authoring, mark the bottleneck with `gate: true` instead — the linter
+then _warns about puzzles that bypass it_ and _errors if it lacks a hint ladder_.
+
+## Pattern 3 — the double-key door（双钥匙门）
+
+**Intent.** A convergence point: two independent discoveries (in either order)
+are both required to open one door. Classic PDC "bushiness" — the player has
+two live leads, and the door opens the moment the second key lands.
+
+**Structure.**
+
+```mermaid
+flowchart LR
+  A[key A: read the letter] --> D{both flags?}
+  B[key B: read the chat log] --> D
+  D -- flag:change --> U[unlock + payoff]
+```
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-double-key",
+  "strings": {
+    "zh": { "door.title": "咔哒", "door.body": "两条线索对上了——那个文件夹的密码有眉目了。" },
+    "en": {
+      "door.title": "Click",
+      "door.body": "The two clues line up — you can guess that folder's password now."
+    }
+  },
+  "triggers": [
+    {
+      "id": "key-a",
+      "on": "file:open",
+      "when": { "event": { "name": "旧信.txt" } },
+      "once": true,
+      "do": [{ "setFlag": "key_letter" }]
+    },
+    {
+      "id": "key-b",
+      "on": "file:open",
+      "when": { "event": { "name": "聊天记录.txt" } },
+      "once": true,
+      "do": [{ "setFlag": "key_chatlog" }]
+    },
+    {
+      "id": "door-opens",
+      "on": "flag:change",
+      "when": { "all": [{ "flag": "key_letter" }, { "flag": "key_chatlog" }] },
+      "once": true,
+      "do": [
+        { "unlock": ["我的电脑", "本地磁盘 (C:)", "尘封"] },
+        { "notify": { "titleKey": "door.title", "bodyKey": "door.body" } }
+      ]
+    }
+  ]
+}
+```
+
+Listening on `flag:change` (not on the key events) is what makes the door
+order-independent: whichever key lands second raises the door, and adding a
+third key later means touching only the `when`. This works because both keys
+are _flags_ — durable state. When one "key" is a raw event (an unlock, a
+navigation) rather than a flag you set, the same idea needs the `happened`
+journal predicate — see Pattern 12 (the order-independent gate).
+
+**Anti-pattern.** Putting the unlock inside _both_ key triggers, each checking
+the other's flag — two copies of the payoff to keep in sync, and a third key
+means editing three triggers. Convergence logic belongs in one trigger.
+
+## Pattern 4 — the idle nudge（发呆推动）
+
+**Intent.** The player has stalled — not failing, just idle. A buddy pings, a
+balloon points somewhere. Bounded (`max`) so care doesn't become nagging, and
+disarmed once the beat it protects is done.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-idle-nudge",
+  "strings": {
+    "zh": { "nudge.text": "在吗？卡住的话，看看回收站——有些东西删了还在。" },
+    "en": {
+      "nudge.text": "You there? If you're stuck, check the Recycle Bin — deleted isn't gone."
+    }
+  },
+  "triggers": [
+    {
+      "id": "found-it",
+      "on": "file:restore",
+      "when": { "event": { "name": "写给未来的信.txt" } },
+      "once": true,
+      "do": [{ "setFlag": "letter_restored" }]
+    },
+    {
+      "id": "idle-nudge",
+      "on": "user:idle",
+      "when": { "not": { "flag": "letter_restored" } },
+      "max": 3,
+      "do": [{ "qqMessage": { "buddyId": "crystal", "textKey": "nudge.text" } }]
+    }
+  ]
+}
+```
+
+`user:idle` fires per idle period (#130), so `max: 3` means at most three
+nudges per save — give any bounded trigger a stable `id` so the persisted fire
+count survives rulebook edits.
+
+**Anti-pattern.** An unbounded, unguarded `user:idle` trigger. It fires on
+every idle period for the lifetime of the save — including after the story is
+over — and trains the player to ignore the channel. Escalation across several
+idle periods belongs to the hint ladder (Pattern 1, `ladder({ idles: 1 }, …)`),
+not to one trigger repeating the same line.
+
+## Pattern 5 — looping buddy chatter（循环好友闲聊）
+
+**Intent.** Ambient life: a buddy answers _something_ whenever the player
+messages them, cycling through a small pool of lines, without ever advancing
+the story. Progress never depends on it.
+
+**Structure.** A counter flag walks 0 → 1 → 2 → 0; each line owns one counter
+value. **Declare the triggers in _reverse_ counter order** — within one event,
+later triggers see flag changes made by earlier ones (see
+[`SCENARIOS.md` § Trigger order](./SCENARIOS.md#trigger-order--flag-cascades)),
+so ascending order would dump the whole pool in a single reply.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-buddy-chatter",
+  "initialFlags": { "chatter_i": 0 },
+  "strings": {
+    "zh": {
+      "chat.0": "刚下副本，累死了[困]",
+      "chat.1": "你那边天气怎么样？",
+      "chat.2": "等我攒够钱就去买那块显卡！"
+    },
+    "en": {
+      "chat.0": "Just got out of a raid, exhausted [sleepy]",
+      "chat.1": "How's the weather over there?",
+      "chat.2": "Once I save up I'm buying that graphics card!"
+    }
+  },
+  "triggers": [
+    {
+      "id": "chatter-2",
+      "on": "qq:reply",
+      "when": { "all": [{ "event": { "buddyId": "zhe" } }, { "flag": "chatter_i", "eq": 2 }] },
+      "do": [
+        { "qqMessage": { "buddyId": "zhe", "textKey": "chat.2" } },
+        { "setFlag": "chatter_i", "value": 0 }
+      ]
+    },
+    {
+      "id": "chatter-1",
+      "on": "qq:reply",
+      "when": { "all": [{ "event": { "buddyId": "zhe" } }, { "flag": "chatter_i", "eq": 1 }] },
+      "do": [
+        { "qqMessage": { "buddyId": "zhe", "textKey": "chat.1" } },
+        { "setFlag": "chatter_i", "value": 2 }
+      ]
+    },
+    {
+      "id": "chatter-0",
+      "on": "qq:reply",
+      "when": { "all": [{ "event": { "buddyId": "zhe" } }, { "flag": "chatter_i", "eq": 0 }] },
+      "do": [
+        { "qqMessage": { "buddyId": "zhe", "textKey": "chat.0" } },
+        { "setFlag": "chatter_i", "value": 1 }
+      ]
+    }
+  ]
+}
+```
+
+When the pool has no story-state dependence at all, prefer the data-side loop —
+a QQ buddy's `reply: { "kind": "script", "steps": [...] }` cycles automatically
+with zero triggers. Use the scenario-side loop only when the chatter must react
+to flags (a different pool per act, a line that appears after a discovery).
+
+**Anti-pattern.** Declaring the three triggers in ascending order — one
+`qq:reply` cascades through all of them (0→1 fires, then the eq-1 trigger sees
+the _new_ value and fires too…) and the buddy dumps the entire pool at once.
+The other classic mistake: letting a chatter trigger `setFlag` a _story_ flag —
+ambience must never gate progress.
+
+## Pattern 6 — the password-puzzle trio（密码谜题三件套）
+
+**Intent.** The workhorse desktop puzzle, as one deployable unit: **① a locked
+node** (the door), **② a clue file** whose content implies the password (the
+key), **③ a failure-counter hint** (the mercy rung). This is Pattern 1 attached
+to real content — shipped as a content pack so the lock and the clue travel
+together.
+
+**Structure.**
+
+```mermaid
+flowchart LR
+  C[② clue file<br/>网吧开业 2004-03-18] -->|player reads| P[player types 0318]
+  P --> L[① locked folder 尘封]
+  P -. fails ×2 .-> H[③ hint balloon]
+  L --> W[file:unlock → payoff]
+```
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-password-trio",
+  "files": {
+    "尘封": {
+      "type": "folder",
+      "name": "尘封",
+      "locked": true,
+      "password": "0318",
+      "children": {}
+    },
+    "网吧会员卡.txt": {
+      "type": "file",
+      "name": "网吧会员卡.txt",
+      "app": "Notepad",
+      "content": "蓝月亮网吧 会员卡\r\n办卡日期：开业当天（2004年3月18日）\r\n她说：好记的日子，就当密码用吧。"
+    }
+  },
+  "scenario": {
+    "id": "pattern-password-trio",
+    "strings": {
+      "zh": {
+        "hint.title": "提示",
+        "hint.date": "会员卡上的那个日期，四位数字。",
+        "open.title": "打开了",
+        "open.body": "尘封的文件夹开了——里面是那年夏天的东西。"
+      },
+      "en": {
+        "hint.title": "Hint",
+        "hint.date": "The date on the membership card — four digits.",
+        "open.title": "Open",
+        "open.body": "The sealed folder opens — everything from that summer is inside."
+      }
+    },
+    "triggers": [
+      {
+        "id": "trio-hint",
+        "on": "password:fail",
+        "when": {
+          "all": [
+            { "not": { "flag": "trio_open" } },
+            { "count": { "type": "password:fail", "match": { "name": "尘封" } }, "gte": 2 }
+          ]
+        },
+        "once": true,
+        "do": [{ "notify": { "titleKey": "hint.title", "bodyKey": "hint.date" } }]
+      },
+      {
+        "id": "trio-payoff",
+        "on": "file:unlock",
+        "when": { "event": { "name": "尘封" } },
+        "once": true,
+        "do": [
+          { "setFlag": "trio_open" },
+          { "notify": { "titleKey": "open.title", "bodyKey": "open.body" } }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The XP password prompt is the player-facing challenge; the scenario only
+watches `password:fail` / `file:unlock`. Knowledge is the real lock (M2): a
+player who already knows `0318` may skip the clue entirely — that's a feature.
+
+**Anti-pattern.** A lock with no clue file in the same pack (the answer lives
+only in the author's head — unsolvable), or a clue that states the password
+verbatim (no correlation step; M1 dies). And never gate the hint on _time
+alone_: count failures, so the mercy arrives exactly when it's needed.
+
+## Pattern 7 — the timed beat（时间触发 beat）
+
+**Intent.** The machine remembers (M9): a beat anchored to the wall clock (the
+23:00 knock) or paced by a delay (knock, _then_ the message). Time creates
+presence — a buddy who messages at a specific hour feels alive.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-timed-beat",
+  "strings": {
+    "zh": { "night.text": "这么晚还开着机？明天还要上课呢。" },
+    "en": { "night.text": "Still up this late? There's class tomorrow." }
+  },
+  "triggers": [
+    {
+      "id": "night-owl",
+      "on": "time:hour",
+      "when": { "event": { "hour": 23 } },
+      "once": true,
+      "do": [
+        { "qqOnline": "zhe" },
+        {
+          "after": {
+            "ms": 4000,
+            "do": [{ "qqMessage": { "buddyId": "zhe", "textKey": "night.text" } }]
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+Two clocks compose here: `time:hour` anchors the beat to the world's clock;
+`after` paces the payoff _within_ the beat (the knock lands, four seconds of
+silence, then the line — silence is the drama). Delays ride the #130 persisted
+scheduler: **there is no background execution** — a deadline that passes while
+the page is closed fires on the next load.
+
+**Anti-pattern.** Hard-gating progress on real time with no diegetic override
+(PUZZLE-DESIGN M9 rule): if the _only_ path forward is "wait until 23:00", the
+player who plays at noon is locked out of the game. A timed beat may _flavor_
+progress; a knowledge or action path must always exist. Also don't chain long
+`after` delays to fake a schedule — a closed tab collapses them all onto the
+next load, and the whole "schedule" fires at once.
+
+---
+
+# Part II — Content patterns (the content-reference model, #241)
+
+The building block is `ContentRef` — three sources, one shape
+([`src/content/types.ts`](../src/content/types.ts)):
+
+```ts
+type ContentRef =
+  | string // inline — the content itself (fast path)
+  | { url: string } // a host asset URL (build import / public/ / CDN)
+  | { asset: string }; // a logical key, resolved via the pack's `assets` manifest
+```
+
+`{ asset }` is the **portable** reference: a content pack ships its own `assets`
+map, so `{ asset: 'letter' }` resolves wherever the pack is mounted. References
+resolve lazily and cache (see [`resolver.ts`](../src/content/resolver.ts)). The
+recipes below inline their assets so they stay self-contained; a real pack
+points `assets` values at files (`{ "url": "./assets/bbs.html" }`) and keeps
+authoring them as files, not escaped JSON strings.
+
+## Pattern 8 — the fictional website（虚构网站三件套）
+
+**Intent.** A fake 2005-era webpage the player must "visit" in Internet
+Explorer. Three pieces: **① the page body** (an HTML asset), **② a site
+registry entry** (so IE serves your page — authorized pages always win, #149),
+**③ a hook into the story** (an `ie:navigate` trigger; the URL itself is a clue
+found elsewhere).
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-fictional-site",
+  "assets": {
+    "bbs-home": "<html><body><h1>青春 BBS</h1><p>置顶：初三(2)班十年之约 —— 密码是她的生日</p></body></html>"
+  },
+  "sites": {
+    "http://qingchun-bbs.com": {
+      "title": "青春 BBS — 首页",
+      "html": { "asset": "bbs-home" }
+    }
+  },
+  "scenario": {
+    "id": "pattern-fictional-site",
+    "strings": {
+      "zh": {
+        "bbs.title": "看到了吗",
+        "bbs.body": "置顶帖里提到的『十年之约』——去桌面上找那封信。"
+      },
+      "en": {
+        "bbs.title": "See it?",
+        "bbs.body": "That pinned 'ten-year promise' thread — find the letter on the desktop."
+      }
+    },
+    "triggers": [
+      {
+        "id": "visit-bbs",
+        "on": "ie:navigate",
+        "when": { "event": { "url": "http://qingchun-bbs.com" } },
+        "once": true,
+        "do": [
+          { "setFlag": "seen_bbs" },
+          { "notify": { "titleKey": "bbs.title", "bodyKey": "bbs.body" } }
+        ]
+      },
+      {
+        "id": "bbs-gated-beat",
+        "on": "file:open",
+        "when": { "all": [{ "flag": "seen_bbs" }, { "event": { "name": "十年之约.txt" } }] },
+        "once": true,
+        "do": [{ "unlock": ["我的电脑", "本地磁盘 (D:)", "她的相册"] }]
+      }
+    ]
+  }
+}
+```
+
+Site keys are normalized (protocol / `www.` / trailing slash / case stripped),
+so write them however reads best. The lint's `unauthorized-url` check enforces
+the trio's integrity: any URL a trigger references must exist in `sites`.
+
+**Anti-pattern.** Authoring the page as an escaped string _forever_ — inline is
+the prototyping fast path; once the page grows, move it to
+`"assets": { "bbs-home": { "url": "./assets/bbs.html" } }` and edit real HTML.
+Worse: pointing the story at a URL that isn't registered — the player gets the
+Wayback fallback instead of your page, and lint flags it as an error.
+
+## Pattern 9 — the long-document clue（长文档线索）
+
+**Intent.** A letter, a diary, a printout — the payoff document. Too long to
+sit comfortably inline; the writer wants to edit Markdown, not JSON strings.
+Gate it behind a lock so the document is the _reward_ for a step, not something
+stumbled into early.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-long-document",
+  "assets": {
+    "grandma-letter": "# 外婆的信\n\n囡囡：\n\n听说你在城里学电脑了。外婆不懂这些，只记得你走那年，院子里的桂花开得特别早……\n\n（后面还有三页）"
+  },
+  "files": {
+    "My Documents": {
+      "type": "folder",
+      "name": "My Documents",
+      "children": {
+        "letter.md": {
+          "type": "file",
+          "name": "外婆的信.md",
+          "app": "MarkdownViewer",
+          "locked": true,
+          "password": "guihua",
+          "contentRef": { "asset": "grandma-letter" }
+        }
+      }
+    }
+  },
+  "scenario": {
+    "id": "pattern-long-document",
+    "strings": {
+      "zh": { "read.title": "读完了", "read.body": "原来那年秋天，外婆就都知道了。" },
+      "en": {
+        "read.title": "Finished",
+        "read.body": "So grandma knew everything, that very autumn."
+      }
+    },
+    "triggers": [
+      {
+        "id": "letter-read",
+        "on": "file:open",
+        "when": { "event": { "name": "外婆的信.md" } },
+        "once": true,
+        "do": [
+          { "setFlag": "letter_read" },
+          { "notify": { "titleKey": "read.title", "bodyKey": "read.body" } }
+        ]
+      },
+      {
+        "id": "epilogue",
+        "on": "qq:reply",
+        "when": { "all": [{ "flag": "letter_read" }, { "event": { "buddyId": "crystal" } }] },
+        "once": true,
+        "do": [{ "qqMessage": { "buddyId": "crystal", "textKey": "read.body" } }]
+      }
+    ]
+  }
+}
+```
+
+`contentRef` is mutually exclusive with inline `content` (lint:
+`content-exclusive`); the body loads on first read and caches. A trigger
+elsewhere `unlock`s the file once the player earns the key — or, as here, the
+password itself is the correlation puzzle.
+
+**Anti-pattern.** Asset → asset chains (`"assets": { "a": { "asset": "b" } }`)
+— manifest values must be concrete sources; the resolver rejects the loop and
+lint errors with `asset-indirection`. Also don't leave dead keys: every
+`{ asset }` must have a manifest entry (`broken-asset`), and every manifest
+entry must be referenced (`orphan-asset`).
+
+## Pattern 10 — the mixed web（混合网页）
+
+**Intent.** A believable-feeling web with authored islands: **authorized sites
+carry every essential clue**; the space _around_ them is left to the generated
+web (#149's era-styled filler) so the world doesn't end at your three pages.
+The design contract: **an essential clue never comes from a generated page** —
+generated content is atmosphere, not canon.
+
+**Structure.**
+
+```mermaid
+flowchart LR
+  subgraph authored [authorized sites — canon]
+    BBS[qingchun-bbs.com<br/>carries the clue]
+  end
+  subgraph generated [generated web — atmosphere #149]
+    G1[search filler]
+    G2[link-neighbor pages]
+  end
+  BBS -->|ie:navigate trigger| Story[story advances]
+  G1 -.->|never gated on| Story
+```
+
+**Recipe.** Note the story only ever _references_ the authorized URL; the
+generated periphery needs no registration at all.
+
+```json
+{
+  "id": "pattern-mixed-web",
+  "assets": {
+    "news-page": "<html><body><h2>县城晚报（电子版）</h2><p>2004年3月18日：城东『蓝月亮网吧』今日开业，前一百名会员免费办卡。</p></body></html>"
+  },
+  "sites": {
+    "http://xianchengwanbao.com/2004/0318": {
+      "title": "县城晚报 2004-03-18",
+      "html": { "asset": "news-page" }
+    }
+  },
+  "scenario": {
+    "id": "pattern-mixed-web",
+    "strings": {
+      "zh": { "news.title": "找到了", "news.body": "开业那天的日期……和会员卡对上了。" },
+      "en": {
+        "news.title": "Found it",
+        "news.body": "The opening date… matches the membership card."
+      }
+    },
+    "triggers": [
+      {
+        "id": "read-news",
+        "on": "ie:navigate",
+        "when": { "event": { "url": "http://xianchengwanbao.com/2004/0318" } },
+        "once": true,
+        "do": [
+          { "setFlag": "seen_news" },
+          { "notify": { "titleKey": "news.title", "bodyKey": "news.body" } }
+        ]
+      },
+      {
+        "id": "news-payoff",
+        "on": "file:unlock",
+        "when": { "all": [{ "flag": "seen_news" }, { "event": { "name": "尘封" } }] },
+        "once": true,
+        "do": [{ "qqMessage": { "buddyId": "crystal", "textKey": "news.body" } }]
+      }
+    ]
+  }
+}
+```
+
+The `unauthorized-url` lint check is this pattern's contract made mechanical:
+if a trigger, a clue file, or a QQ line mentions a URL, it must be registered
+in `sites` — so canon can't silently depend on a page you don't control.
+
+**Anti-pattern.**
+
+```jsonc
+{
+  "on": "ie:navigate",
+  // ✗ lint error `unauthorized-url`: this URL is not in `sites` — at runtime the
+  //   player would see a generated (or Wayback) page, and canon would hang off
+  //   content nobody authored. Register the page, or drop the gate.
+  "when": { "event": { "url": "http://some-random-blog.com/clue" } },
+  "do": [{ "setFlag": "essential_clue" }],
+}
+```
+
+---
+
+# Part III — Hybrid: configuring runtime AI with static data
+
+Design-time AI (drafting these files) and runtime AI (the in-game LLM,
+#148–#150) are different roles — but the _configuration_ of runtime AI is
+itself static data an author writes, so it goes through the same
+draft-then-adjudicate pipeline as any other content.
+
+## Pattern 11 — the AI-buddy trio（AI 好友三件套）
+
+**Intent.** Give a QQ buddy an LLM brain **safely**: **① a persona** (who the
+buddy is), **② explicit context selectors** (exactly which flags / which file
+summaries the provider may see — never "the whole world"), **③ a non-empty
+fallback script** — the offline contract: the buddy must hold a conversation
+with no provider wired at all.
+
+The load-bearing engine rule (#148 behavior semantics 3): **an LLM reply is
+pure text — it cannot set flags, unlock files, or advance the story.**
+Progression gates on player-observable events only, so a provider outage (or a
+hallucinating model) can degrade _flavor_, never _progress_.
+
+**Structure.**
+
+```mermaid
+flowchart LR
+  P[① persona] --> B[provider: chat]
+  S[② context selectors<br/>flags + fileSummary] --> B
+  B -- provider up --> T[flavored reply text]
+  B -- provider down --> F[③ fallback script]
+  T & F -.text only, never flags.-> X[story state unchanged]
+```
+
+**Recipe.** The trio rides the `provider: "chat"` branch; lint adjudicates all
+three legs (`provider-fallback` / `provider-flag` / `provider-file`):
+
+```json
+{
+  "id": "pattern-ai-buddy",
+  "files": {
+    "日记.txt": {
+      "type": "file",
+      "name": "日记.txt",
+      "app": "Notepad",
+      "content": "6月12日 晴。今天在机房又见到她了。"
+    }
+  },
+  "scenario": {
+    "id": "pattern-ai-buddy",
+    "triggers": [
+      {
+        "id": "meet-zhe",
+        "on": "qq:open",
+        "when": { "event": { "buddyId": "zhe" } },
+        "once": true,
+        "do": [{ "setFlag": "met_zhe" }]
+      },
+      {
+        "id": "arm-zhe-brain",
+        "on": "qq:open",
+        "when": { "all": [{ "flag": "met_zhe" }, { "event": { "buddyId": "zhe" } }] },
+        "once": true,
+        "do": [
+          {
+            "openApp": {
+              "appId": "QQ",
+              "props": {
+                "id": "zhe",
+                "persona": "阿哲，2005 年县城高二学生，网瘾少年，讲话三句不离游戏，重感情但嘴硬。",
+                "reply": {
+                  "provider": "chat",
+                  "context": [
+                    { "flags": ["met_zhe"] },
+                    { "fileSummary": { "path": ["日记.txt"] } }
+                  ],
+                  "fallback": [
+                    "刚才掉线了……你说啥？",
+                    "网吧这机器不行，卡得要死。",
+                    "等我打完这把再细说！"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Declaration order does the sequencing: `meet-zhe` runs first within the same
+`qq:open` event, so `arm-zhe-brain` sees the freshly-set flag and arms on the
+very first open (see [`SCENARIOS.md` § Trigger order](./SCENARIOS.md#trigger-order--flag-cascades)).
+
+`solve` reports the pack's provider-fallback node count and completes the
+walkthrough **with no provider wired** — proving the offline contract holds.
+Rehearse the persona live with `xp-scenario serve` (`chat zhe <message>`, and
+`chat --offline zhe` for the fallback path).
+
+**Anti-pattern.** Two, both fatal:
+
+```jsonc
+{
+  "reply": {
+    "provider": "chat",
+    "fallback": [], // ✗ lint error `provider-fallback`: offline players meet a mute buddy
+  },
+}
+```
+
+```jsonc
+// ✗ impossible by design — an LLM reply is text, it cannot run actions. There
+//   is no "when the AI says X, setFlag Y". If a beat must advance the story,
+//   script it (qqMessage/qq:choice) and gate on the player's observable act.
+{ "on": "qq:message", "when": { "event": { "text": "<whatever the model said>" } } }
+```
+
+A subtler failure: a context selector that names a flag or file the pack never
+defines — the provider would silently get an empty context. Lint catches both
+(`provider-flag` / `provider-file`).
+
+---
+
+# Part IV — Non-linear structure patterns（非线性结构）
+
+The engine's deepest design commitments are non-linear: knowledge is the only
+lock (M2), sequence-breaking is a feature, and the puzzle dependency graph
+(Layer 3) exists precisely so an act can be _wide_ — several live leads at
+once — without the author hand-managing the combinatorics. These patterns are
+about the **shape of the story graph**, not any single beat.
+
+## Pattern 12 — the order-independent gate（顺序无关的门, M2）
+
+**Intent.** A convergence the player may complete **in any order** — including
+orders you didn't script. The archetype is the knowledge gate: a locked folder
+whose password is answerable from minute one, so a player who already knows
+(or guesses) opens it _before_ finding the clue that explains it. Outer Wilds'
+rule: the only lock is knowledge; a sequence break is a win, not a bug.
+
+Two mechanical rules make a gate order-proof:
+
+1. **Gate on durable predicates** — flags, `happened` (the persisted event
+   journal), FS state — never on the transient `event` payload alone. An
+   `event` match is true only at the instant of that one event; if the other
+   half of the condition isn't true _yet_, the moment is gone forever.
+2. **Listen on every channel that can complete the condition.** If the gate
+   needs an unlock _and_ a flag, it must wake on both `file:unlock` _and_
+   `flag:change` — whichever lands last raises it.
+
+**Structure.**
+
+```mermaid
+flowchart LR
+  A[file:unlock<br/>whenever it happens] --> J[(event journal:<br/>happened once, forever)]
+  B[clue read → flag set] --> D{durable gate<br/>on: unlock + flag:change}
+  J --> D
+  D --> F[finale fires in either order]
+  A -. before the clue .-> E[early-bird beat:<br/>acknowledge the breaker]
+```
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-order-independent-gate",
+  "strings": {
+    "zh": {
+      "early.title": "咦？",
+      "early.body": "还没找到线索就打开了——看来你本来就记得。",
+      "finale.title": "对上了",
+      "finale.body": "现在你知道那串数字意味着什么了。"
+    },
+    "en": {
+      "early.title": "Wait—",
+      "early.body": "Open before you even found the clue — you must have remembered all along.",
+      "finale.title": "It clicks",
+      "finale.body": "Now you know what those digits meant."
+    }
+  },
+  "triggers": [
+    {
+      "id": "learn-meaning",
+      "on": "file:open",
+      "when": { "event": { "name": "日记.txt" } },
+      "once": true,
+      "do": [{ "setFlag": "knows_meaning" }]
+    },
+    {
+      "id": "early-bird",
+      "on": "file:unlock",
+      "when": { "all": [{ "not": { "flag": "knows_meaning" } }, { "event": { "name": "私人" } }] },
+      "once": true,
+      "do": [{ "notify": { "titleKey": "early.title", "bodyKey": "early.body" } }]
+    },
+    {
+      "id": "finale",
+      "on": ["file:unlock", "flag:change"],
+      "when": {
+        "all": [
+          { "flag": "knows_meaning" },
+          { "happened": { "type": "file:unlock", "match": { "name": "私人" } } }
+        ]
+      },
+      "once": true,
+      "do": [{ "notify": { "titleKey": "finale.title", "bodyKey": "finale.body" } }]
+    }
+  ]
+}
+```
+
+Three things to copy exactly:
+
+- `happened` (not `event`) carries the unlock across time — the journal
+  remembers it whether it came first or last. For **player-driven** unlocks
+  prefer `happened('file:unlock')` over the `unlocked` FS predicate: the
+  headless solver models player unlocks as journal events (an `unlock` _action_
+  mutates its virtual FS; a password entry does not), so `happened` is what
+  both the solver and the live save see.
+- The double `on` makes the gate wake on whichever half completes last.
+- The **early-bird beat** turns the sequence break into content: the story
+  _notices_ the player who already knew, instead of ignoring them. One `not`
+  guard is all it costs.
+
+**Anti-pattern.** Gating the convergence on the transient event:
+
+```jsonc
+{
+  "on": "file:unlock",
+  // ✗ if the player unlocks BEFORE the clue, this evaluates false once and the
+  //   unlock event never comes again (the folder is already open) — the finale
+  //   is permanently soft-locked. Found in this repo's own walkthrough example
+  //   by a scrambled-order solve replay; see SCENARIO-AUTHORING-WALKTHROUGH.md.
+  "when": { "all": [{ "flag": "knows_meaning" }, { "event": { "name": "私人" } }] },
+  "do": [{ "notify": { "bodyKey": "finale.body" } }],
+}
+```
+
+Adjudicate order-independence the same way everything else is adjudicated:
+keep a scrambled event tape next to the canonical one and `solve --events`
+both in CI (`examples/midsummer-pack/seqbreak.events.json` is the reference).
+
+## Pattern 13 — the bushy act（并行调查网, PuzzleGraph）
+
+**Intent.** An investigation act should be **wide**: several independent leads
+open at once, explorable in any order, funnelling into one act gate. Width is
+what makes being stuck survivable — a player blocked on one lead advances
+another (the Roottrees/Obra Dinn loop). The puzzle dependency graph (Layer 3)
+is the engine's native way to author this: declare nodes and `requires` edges;
+the compiler derives all gating triggers, and the graph linter mechanically
+checks what PDCs were invented to catch (unreachable nodes, cycles, gate
+bypasses, critical steps without hint ladders) and reports **bushiness** — how
+many puzzles are open at each depth — as a pacing dial.
+
+**Structure.** One intro fans out to three leads (bushiness `[1, 3, 1]`,
+`maxParallel: 3`), converging on a `gate: true` bottleneck:
+
+```mermaid
+flowchart LR
+  I[intro] --> A[lead: the letter]
+  I --> B[lead: the BBS]
+  I --> C[lead: the chat log]
+  A --> G{{confront — gate}}
+  B --> G
+  C --> G
+```
+
+**Recipe.** This is the `graph` input kind — the same CLI commands accept it
+(`lint` compiles and checks it; `solve` expects every `solved:*` flag). In
+TypeScript, `ladder()`/`ladderKeys()` are sugar for the raw `hints` arrays
+shown here.
+
+```json
+{
+  "id": "pattern-bushy-act",
+  "strings": {
+    "zh": {
+      "hint.title": "提示",
+      "hint.intro": "先随便看看——桌面、收藏夹、D 盘，都行。",
+      "hint.letter": "回收站里有一封没删干净的信。",
+      "hint.bbs": "收藏夹里那个论坛，很久没上了。",
+      "hint.chat": "D 盘的聊天记录还在。",
+      "hint.confront": "三条线索都指向同一个日期——就是那个密码。",
+      "confront.title": "对质",
+      "confront.body": "信、帖子、聊天记录——三样东西拼出了同一个晚上。"
+    },
+    "en": {
+      "hint.title": "Hint",
+      "hint.intro": "Just poke around — desktop, favorites, the D: drive.",
+      "hint.letter": "A half-deleted letter is still in the Recycle Bin.",
+      "hint.bbs": "That forum in the favorites — nobody's visited in years.",
+      "hint.chat": "The chat log on the D: drive is still there.",
+      "hint.confront": "All three leads point at one date — that's the password.",
+      "confront.title": "The confrontation",
+      "confront.body": "The letter, the thread, the chat log — three pieces of the same night."
+    }
+  },
+  "puzzles": [
+    {
+      "id": "intro",
+      "solvedWhen": { "happened": { "type": "session:boot-complete" } },
+      "hints": [{ "titleKey": "hint.title", "textKey": "hint.intro", "afterIdles": 1 }]
+    },
+    {
+      "id": "lead-letter",
+      "requires": ["intro"],
+      "solvedWhen": { "happened": { "type": "file:open", "match": { "name": "旧信.txt" } } },
+      "hints": [{ "titleKey": "hint.title", "textKey": "hint.letter", "afterIdles": 2 }]
+    },
+    {
+      "id": "lead-bbs",
+      "requires": ["intro"],
+      "solvedWhen": {
+        "happened": { "type": "ie:navigate", "match": { "url": "http://qingchun-bbs.com" } }
+      },
+      "hints": [{ "titleKey": "hint.title", "textKey": "hint.bbs", "afterIdles": 2 }]
+    },
+    {
+      "id": "lead-chat",
+      "requires": ["intro"],
+      "solvedWhen": { "happened": { "type": "file:open", "match": { "name": "聊天记录.txt" } } },
+      "hints": [{ "titleKey": "hint.title", "textKey": "hint.chat", "afterIdles": 2 }]
+    },
+    {
+      "id": "confront",
+      "requires": ["lead-letter", "lead-bbs", "lead-chat"],
+      "gate": true,
+      "solvedWhen": { "happened": { "type": "file:unlock", "match": { "name": "真相" } } },
+      "grants": [{ "notify": { "titleKey": "confront.title", "bodyKey": "confront.body" } }],
+      "hints": [{ "titleKey": "hint.title", "textKey": "hint.confront", "afterFails": 2 }]
+    }
+  ]
+}
+```
+
+Craft notes:
+
+- **The three leads are order-free by construction** — `requires` gating works
+  on solved-flags, so the compiler builds Pattern-12-style durable gates for
+  you. This is why graph authoring should be the default for anything with
+  more than one live lead.
+- **Every node carries a hint ladder.** The linter _errors_ on a critical-path
+  node without one and _warns_ on any other — under this library's
+  zero-warning CI bar, that means hints are simply mandatory. Note the pacing:
+  parallel leads hint lazily (`afterIdles: 2`) because the player has other
+  things to do; the gate hints on failures (`afterFails: 2`) because by then
+  it's the only door left.
+- **Ask the linter for the shape**: `graph --format mermaid` renders the
+  chart; the lint report's `bushiness`/`maxParallel` quantify pacing. An
+  investigation act that reports `[1, 1, 1, 1]` is a corridor pretending to be
+  a mystery.
+
+**Anti-pattern.** The corridor of doors: each clue's only purpose is to point
+at the next clue (letter → forum → chat log → password, strictly in order).
+Every soft-lock risk in this library's other anti-patterns compounds in a
+corridor, because there is never a second live lead to fall back on — one
+missed beat stalls the whole story. If your graph has no depth with more than
+one open puzzle, widen it or accept that it's a short story, not an
+investigation. The other classic failure is declaring a `gate` and then adding
+a shortcut node that doesn't `require` it — the linter reports exactly this
+(`bypasses gate "confront"`).
+
+---
+
+# Part V — The detective suite（侦探套件）
+
+The engine ships three scenario-layer investigation surfaces — the in-world
+search engine (M5, inside IE), the evidence board (M4), and the deduction
+sheet (M3) — plus the `contentContains` FS predicate as the day-one
+"prove it" verb. They carry no game semantics themselves (axiom 2: apps emit
+events, scenarios gate on journal predicates), which is exactly why they need
+patterns: the _shape of the gating_ is where the genre craft lives.
+
+## Pattern 14 — the search oracle（搜索神谕, M5）
+
+**Intent.** Her Story's engine: **queries are the puzzle**. Searching a term
+the player could only have learned late _is_ the knowledge gate in search-box
+form. Three authoring rules from the genre: reward the **idea** of a search,
+not an exact string (`searched` matches case-insensitive substrings of past
+queries); treat **misses as content** (an authored no-results nudge, not a
+dead page); and let a **found result read straight into a clue**.
+
+**Recipe.** The corpus itself ships as the IE `searchCorpus` prop; the
+scenario only gates on what the player asked and what surfaced:
+
+```json
+{
+  "id": "pattern-search-oracle",
+  "strings": {
+    "zh": {
+      "nick.title": "搜到了",
+      "nick.body": "这个网名——2004 年那个帖子里说的就是她。",
+      "miss.title": "没有结果",
+      "miss.body": "换个搜法试试：人名、地名、日期……或者帖子里出现过的网名。"
+    },
+    "en": {
+      "nick.title": "A hit",
+      "nick.body": "That screen name — the 2004 thread was about her.",
+      "miss.title": "No results",
+      "miss.body": "Try another angle: a name, a place, a date… or that screen name from the thread."
+    }
+  },
+  "triggers": [
+    {
+      "id": "searched-nickname",
+      "on": "search:query",
+      "when": { "searched": "水晶女孩" },
+      "once": true,
+      "do": [
+        { "setFlag": "knows_nickname" },
+        { "notify": { "titleKey": "nick.title", "bodyKey": "nick.body" } }
+      ]
+    },
+    {
+      "id": "found-thread",
+      "on": "search:query",
+      "when": { "all": [{ "flag": "knows_nickname" }, { "found": "bbs-2004-thread" }] },
+      "once": true,
+      "do": [{ "unlock": ["我的电脑", "本地磁盘 (D:)", "她的文件夹"] }]
+    },
+    {
+      "id": "miss-nudge",
+      "on": "search:query",
+      "when": {
+        "all": [
+          { "not": { "flag": "knows_nickname" } },
+          { "event": { "hit": false } },
+          { "count": { "type": "search:query", "match": { "hit": false } }, "gte": 3 }
+        ]
+      },
+      "max": 2,
+      "do": [{ "notify": { "titleKey": "miss.title", "bodyKey": "miss.body" } }]
+    }
+  ]
+}
+```
+
+The `miss-nudge` trigger is the Roottrees lesson operationalized: **the miss
+log is the difficulty-tuning tool**. During playtests, watch which queries
+miss (`search:query` with `hit: false` in the journal / `onEvent`); every
+recurring miss is either a missing `match` synonym in the corpus or a hint
+that arrived too late.
+
+**Anti-pattern.** Gating on an exact query string (`event: { query: "…" }`)
+instead of `searched` — players who type a variant ("水晶女孩是谁") get
+nothing, and the oracle feels like a password field. Equally bad: a corpus
+where only story-critical queries return results — a search engine that
+answers _nothing else_ telegraphs exactly what to search (noise results are
+part of the fiction; see the mixed-web pattern).
+
+## Pattern 15 — the evidence chain（证据链, M4）
+
+**Intent.** The Roottrees/Shadows-of-Doubt corkboard verb: the player proves a
+_connection_, not a fact — pin two items, string them together. Because
+`pinned`/`linked` are **journal-derived** (net pins; a link needs both ends
+still pinned), the board carries no runtime state and survives save/load by
+replay.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-evidence-chain",
+  "strings": {
+    "zh": {
+      "nudge.title": "差一步",
+      "nudge.body": "两条证据都钉上了——试着把它们连起来。",
+      "link.title": "连上了",
+      "link.body": "日记和聊天记录指向同一个晚上。",
+      "payoff.text": "你把日记和聊天记录放在一起看过了吧？那晚的事，我现在可以说了。"
+    },
+    "en": {
+      "nudge.title": "One step left",
+      "nudge.body": "Both pieces are pinned — try stringing them together.",
+      "link.title": "Connected",
+      "link.body": "The diary and the chat log point at the same night.",
+      "payoff.text": "You've seen the diary and the chat log side by side, haven't you? I can talk about that night now."
+    }
+  },
+  "triggers": [
+    {
+      "id": "both-pinned-nudge",
+      "on": "evidence:pin",
+      "when": {
+        "all": [
+          { "pinned": "diary" },
+          { "pinned": "chatlog" },
+          { "not": { "linked": { "a": "diary", "b": "chatlog" } } }
+        ]
+      },
+      "once": true,
+      "do": [{ "notify": { "titleKey": "nudge.title", "bodyKey": "nudge.body" } }]
+    },
+    {
+      "id": "connected",
+      "on": "evidence:link",
+      "when": { "linked": { "a": "diary", "b": "chatlog" } },
+      "once": true,
+      "do": [
+        { "setFlag": "case_connected" },
+        { "notify": { "titleKey": "link.title", "bodyKey": "link.body" } }
+      ]
+    },
+    {
+      "id": "board-payoff",
+      "on": "flag:change",
+      "when": { "all": [{ "flag": "case_connected" }] },
+      "once": true,
+      "do": [{ "qqMessage": { "buddyId": "zhe", "textKey": "payoff.text" } }]
+    }
+  ]
+}
+```
+
+The nudge fires on the _pin_ channel (the player has assembled the parts but
+not the connection) — a micro hint ladder for the board verb. `linked` is
+order-insensitive and silently invalidated by unpinning either end, so gate
+follow-ups on the flag (durable), not on re-checking `linked` later.
+
+**Anti-pattern.** Treating a pin as an endorsement: `pinned` counts _net_
+pins, not conviction — a player pins everything that looks interesting.
+Gate story progress on **links** (a deliberate claim of connection), never on
+mere pin counts, or the board degrades into "pin everything, win".
+
+## Pattern 16 — the graded verdict（推理表结局与证据定级, M3 + M6）
+
+**Intent.** The finale as _proof of comprehension_, with Paradise Killer's
+mercy: the deduction sheet **accepts any submission** — the quality of the
+epilogue depends on the evidence actually gathered. Obra Dinn's
+anti-brute-force lives in the app (verify-in-groups via the `groups`
+payload); the scenario only grades the case. `count` over the journal is the
+"weighted evidence" expression — no bookkeeping flags needed.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-graded-verdict",
+  "strings": {
+    "zh": {
+      "good.title": "全部对上了",
+      "good.body": "每一条指认都有证据压着。没有人能再翻案。",
+      "plain.title": "报告提交了",
+      "plain.body": "结论是对的，可有几处只是猜测。真相成立，但不是铁案。",
+      "file.epilogueGood": "结案卷宗（完整）：四条证据环环相扣，签名归档。",
+      "file.epiloguePlain": "结案卷宗（存疑）：结论成立，但证据链有缺口。也许有一天你会回来补上。"
+    },
+    "en": {
+      "good.title": "Airtight",
+      "good.body": "Every accusation is pinned down by evidence. Nobody can reopen this.",
+      "plain.title": "Report filed",
+      "plain.body": "The conclusion is right — but parts of it are guesswork. True, yet not ironclad.",
+      "file.epilogueGood": "Case file (complete): four pieces of evidence, interlocking. Signed and archived.",
+      "file.epiloguePlain": "Case file (open questions): the conclusion stands, but the chain has gaps. Maybe one day you'll come back to close them."
+    }
+  },
+  "triggers": [
+    {
+      "id": "ending-good",
+      "on": "deduction:verified",
+      "when": {
+        "all": [
+          { "event": { "formId": "final-report" } },
+          { "count": { "type": "evidence:collect" }, "gte": 4 }
+        ]
+      },
+      "once": true,
+      "do": [
+        { "notify": { "titleKey": "good.title", "bodyKey": "good.body", "timeout": 0 } },
+        {
+          "addFile": {
+            "path": ["结案卷宗.txt"],
+            "node": { "type": "file", "app": "Notepad" },
+            "contentKey": "file.epilogueGood"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ending-plain",
+      "on": "deduction:verified",
+      "when": {
+        "all": [
+          { "event": { "formId": "final-report" } },
+          { "count": { "type": "evidence:collect" }, "lte": 3 }
+        ]
+      },
+      "once": true,
+      "do": [
+        { "notify": { "titleKey": "plain.title", "bodyKey": "plain.body", "timeout": 0 } },
+        {
+          "addFile": {
+            "path": ["结案卷宗.txt"],
+            "node": { "type": "file", "app": "Notepad" },
+            "contentKey": "file.epiloguePlain"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+The two `when`s partition on the same counter (`gte: 4` / `lte: 3`), so
+exactly one ending fires per verdict. The verification itself (which slots
+are right) belongs to the DeductionSheet's props — the scenario never
+duplicates the answer key.
+
+**Anti-pattern.** Two, both genre classics: duplicating the answer key in the
+scenario (`event: { slots: {…} }` matching exact answers — now the truth
+lives in two places and they _will_ drift), and a best ending requiring
+evidence that can expire — if a clue becomes uncollectable (deleted file,
+passed beat) after a point of no return, the player is graded on a test they
+can no longer study for. Evidence for the finale must stay collectable until
+the finale.
+
+## Pattern 17 — the typed passphrase（把答案打进记事本, M3 day-one）
+
+**Intent.** The poor man's deduction sheet, available with zero custom UI:
+the player _types the answer into a file_. Notepad's save emits
+`file:update`; `contentContains` reads the saved body. It converts
+comprehension into an in-world act — writing the name down.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-typed-answer",
+  "strings": {
+    "zh": {
+      "verdict.title": "写下来了",
+      "verdict.body": "你把名字写进了『答案.txt』。手有点抖，但没写错。",
+      "aftermath.text": "你真的写下来了……那我也不瞒你了，那晚我也在场。"
+    },
+    "en": {
+      "verdict.title": "In writing",
+      "verdict.body": "You typed the name into 答案.txt. Your hand shook, but it's the right one.",
+      "aftermath.text": "You actually wrote it down… then I'll stop pretending. I was there that night too."
+    }
+  },
+  "triggers": [
+    {
+      "id": "typed-name",
+      "on": "file:update",
+      "when": {
+        "all": [
+          { "event": { "name": "答案.txt" } },
+          { "contentContains": { "path": ["答案.txt"], "contains": "王小明" } }
+        ]
+      },
+      "once": true,
+      "do": [
+        { "setFlag": "named_culprit" },
+        { "notify": { "titleKey": "verdict.title", "bodyKey": "verdict.body" } }
+      ]
+    },
+    {
+      "id": "aftermath",
+      "on": "flag:change",
+      "when": { "all": [{ "flag": "named_culprit" }] },
+      "once": true,
+      "do": [{ "qqMessage": { "buddyId": "zhe", "textKey": "aftermath.text" } }]
+    }
+  ]
+}
+```
+
+Match generously: `contains` is a substring check, so accept the shortest
+unambiguous token (the bare name, no honorifics); for spelling variants, use
+`any` over several `contentContains`. Adventure-game parser rules apply —
+punish nobody for phrasing.
+
+**Solver fidelity.** The headless solver applies player-driven `file:update`
+and `file:unlock` events to its virtual FS _before_ evaluating triggers, just
+as the live desktop saves or unlocks before emitting the event. A rehearsal
+walkthrough may therefore put this gate on its critical path directly; seed
+the authored file in the pack (or pass `--fs`) and include the saved `content`
+on the `file:update` event.
+
+---
+
+# Part VI — Entry & framing（入口与框架, M11）
+
+## Pattern 18 — the rabbit hole（兔子洞入口 / TINAG）
+
+**Intent.** ARG practice: players should _fall in_, not click "Start". The
+first artifact is discoverable in-fiction — a desktop embedded in a real blog
+post, one odd sticky note, nothing announced ("This Is Not A Game"). The
+engine side is just `mode="embedded"` + `fileSystemMode="replace"` doing what
+they were built for; the scenario side is a quiet first beat that reacts to
+the visitor's first touch instead of greeting them.
+
+**Recipe.** The in-fiction half (lintable):
+
+```json
+{
+  "id": "pattern-rabbit-hole",
+  "strings": {
+    "zh": {
+      "note.body": "别动我的东西。",
+      "react.title": "……",
+      "react.body": "你还是动了。既然开始了，就看到最后吧。"
+    },
+    "en": {
+      "note.body": "Don't touch my stuff.",
+      "react.title": "…",
+      "react.body": "You touched it anyway. Now that you've started — see it through."
+    }
+  },
+  "triggers": [
+    {
+      "id": "plant-warning",
+      "on": "session:boot-complete",
+      "once": true,
+      "do": [{ "note": { "id": "warning", "contentKey": "note.body", "color": "yellow" } }]
+    },
+    {
+      "id": "first-touch",
+      "on": "file:open",
+      "once": true,
+      "do": [
+        { "removeNote": "warning" },
+        { "notify": { "titleKey": "react.title", "bodyKey": "react.body" } }
+      ]
+    }
+  ]
+}
+```
+
+And the host half — the trailhead is an ordinary blog post that happens to
+contain a desktop:
+
+```jsonc
+// Host page (illustrative JSX — not a lintable fixture):
+// <WindowsXP mode="embedded" fileSystemMode="replace"
+//   customFileSystem={oneOddDesktop} scenario={rabbitHole} autoLogin />
+// The post never says "game". The note is the only invitation.
+```
+
+TINAG rules of thumb: the desktop looks _abandoned_, not staged (a few
+mundane files around the odd one — noise is camouflage); the first reaction
+beat (`first-touch`) confirms "this is alive" only after the player commits;
+and **multiple trailheads multiply the catch rate** — several entry artifacts
+(a second odd file, an IE favorite, a recycle-bin remnant) may each start the
+same thread, which is Pattern 12's order-independence applied to entrances:
+converge them on durable predicates, don't assume which one is found first.
+
+**Anti-pattern.** The tutorial balloon on boot ("Welcome! Click the diary to
+begin!") — it breaks TINAG, spends the most intrusive channel on the least
+earned moment, and flattens the discovery the whole entry design exists to
+create. Equally bad: a single mandatory trailhead (one specific file must be
+opened first or nothing works) — that's a corridor door disguised as a rabbit
+hole.
+
+---
+
+# Part VII — Fair-play narrative patterns（公平推理）
+
+## Pattern 19 — the truth archive（真相档案）
+
+**Intent.** The ending leaves behind an in-world debrief that makes the reveal
+cheap to audit: timeline, clue-location index, missed optional material, and
+independent explanations for every red herring. The pack's explicit
+`narrative` registry lets lint verify that prominent objects are recovered and
+that a red herring's payoff is a real location.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-truth-archive",
+  "files": {
+    "车票.txt": {
+      "type": "file",
+      "name": "车票.txt",
+      "content": "2003-07-18，21:40，南站。"
+    },
+    "典当票.txt": {
+      "type": "file",
+      "name": "典当票.txt",
+      "content": "一只与案件无关、但不愿让家人知道的旧手表。"
+    },
+    "真相档案.txt": {
+      "type": "file",
+      "name": "真相档案.txt",
+      "locked": true,
+      "content": "时间线：21:40 抵达南站。\\n线索索引：车票在桌面。\\n错过项：旧论坛私信。\\n红鲱鱼：典当票只是替家人还债。"
+    }
+  },
+  "scenario": {
+    "id": "pattern-truth-archive",
+    "triggers": [
+      {
+        "id": "index-ticket",
+        "on": "file:open",
+        "when": { "event": { "path": ["车票.txt"] } },
+        "once": true,
+        "do": [{ "notify": { "body": "档案索引记下了：桌面的车票。" } }]
+      },
+      {
+        "id": "release-debrief",
+        "on": ["deduction:verified", "deduction:failed"],
+        "once": true,
+        "do": [{ "unlock": ["真相档案.txt"] }, { "notify": { "body": "真相档案已经解锁。" } }]
+      }
+    ]
+  },
+  "narrative": {
+    "prominent": [
+      {
+        "id": "station-ticket",
+        "tier": "required",
+        "ref": { "kind": "file", "path": ["车票.txt"] }
+      },
+      {
+        "id": "pawn-ticket",
+        "tier": "optional",
+        "ref": { "kind": "file", "path": ["典当票.txt"] }
+      }
+    ],
+    "redHerrings": [
+      {
+        "id": "hidden-debt",
+        "ref": { "kind": "file", "path": ["典当票.txt"] },
+        "misdirection": "典当行为像是在销赃。",
+        "explanation": "当事人在隐瞒替家人偿还的旧债。",
+        "payoff": { "kind": "file", "path": ["真相档案.txt"] }
+      }
+    ]
+  }
+}
+```
+
+For selective debrief, branch on the verdict event: a correct answer opens with
+motive and character consequences; a wrong answer opens with the evidence
+chain, then reaches the same full archive. Never hide evidence merely because
+the player answered correctly.
+
+**Anti-pattern.** A results screen that says only “correct”. It confirms the
+author's answer but does not let the player audit why the surprise was fair.
+
+## Pattern 20 — challenge the reader（挑战读者关卡）
+
+**Intent.** Immediately before submission, enumerate the required clues already
+collected and state: “You now possess everything needed to solve the case.”
+`tier: "required"` makes that promise executable: `solve` expects every
+required solved flag while allowing optional nodes to remain unseen.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-challenge-reader",
+  "initialFlags": { "case_open": true },
+  "rehearsal": {
+    "walkthrough": [
+      { "event": { "type": "session:boot-complete" }, "beat": "briefing" },
+      {
+        "event": {
+          "type": "file:open",
+          "path": ["车票.txt"],
+          "name": "车票.txt",
+          "nodeType": "file"
+        },
+        "beat": "ticket"
+      },
+      {
+        "event": {
+          "type": "deduction:submit",
+          "reportId": "case",
+          "answers": { "suspect": "brother" }
+        },
+        "beat": "challenge"
+      }
+    ]
+  },
+  "puzzles": [
+    {
+      "id": "briefing",
+      "tier": "required",
+      "solvedWhen": {
+        "all": [{ "flag": "case_open" }, { "happened": { "type": "session:boot-complete" } }]
+      },
+      "grants": [{ "notify": { "body": "先确认时间线。" } }],
+      "hints": [{ "text": "看看桌面上的车票。", "afterIdles": 1 }]
+    },
+    {
+      "id": "ticket",
+      "tier": "required",
+      "requires": ["briefing"],
+      "solvedWhen": {
+        "happened": { "type": "file:open", "match": { "name": "车票.txt" } }
+      },
+      "grants": [{ "note": { "id": "clues", "content": "已收集：南站车票，21:40。" } }],
+      "hints": [{ "text": "打开车票，核对抵达时间。", "afterIdles": 1 }]
+    },
+    {
+      "id": "old-photo",
+      "tier": "optional",
+      "requires": ["briefing"],
+      "solvedWhen": {
+        "happened": { "type": "file:open", "match": { "name": "合影.jpg" } }
+      },
+      "grants": [{ "notify": { "body": "这是人物背景，不影响锁凶。" } }],
+      "hints": [{ "text": "书桌抽屉里还有一张旧合影。", "afterIdles": 2 }]
+    },
+    {
+      "id": "challenge",
+      "tier": "required",
+      "requires": ["ticket"],
+      "solvedWhen": { "happened": { "type": "deduction:submit" } },
+      "grants": [
+        {
+          "alert": {
+            "title": "挑战读者",
+            "message": "车票与时间线均已收集。你已拥有得出真相所需的一切。"
+          }
+        }
+      ],
+      "hints": [{ "text": "把已收集线索逐条复述，再提交。", "afterIdles": 1 }]
+    }
+  ]
+}
+```
+
+**Anti-pattern.** Making the declaration while a required clue is optional,
+timed, or absent from the walkthrough. That turns a fair-play promise into
+authorial bluff; the required-node solve proof exists specifically to catch it.
+
+## Pattern 21 — false solution, then true solution（伪解答→真解答）
+
+**Intent.** A plausible first answer earns a satisfying reveal, then one
+specific contradiction breaks it and opens the deeper case. The player is not
+punished for accepting the story's deliberately convincing surface.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-false-then-true",
+  "triggers": [
+    {
+      "id": "accept-surface-answer",
+      "on": "deduction:submit",
+      "when": { "event": { "suspect": "caretaker" } },
+      "once": true,
+      "do": [
+        { "setFlag": "surface_solved" },
+        { "notify": { "title": "案子结束了？", "body": "动机、机会、钥匙，全都对得上。" } }
+      ]
+    },
+    {
+      "id": "fatal-contradiction",
+      "on": "file:open",
+      "when": {
+        "all": [{ "flag": "surface_solved" }, { "event": { "name": "未寄出的信.txt" } }]
+      },
+      "once": true,
+      "do": [
+        { "setFlag": "surface_refuted" },
+        {
+          "qqMessage": {
+            "buddyId": "editor",
+            "text": "等等——信上日期早于钥匙失窃。那套解释不可能成立。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "accept-true-answer",
+      "on": "deduction:submit",
+      "when": {
+        "all": [{ "flag": "surface_refuted" }, { "event": { "suspect": "brother" } }]
+      },
+      "once": true,
+      "do": [
+        { "unlock": ["真相档案"] },
+        { "notify": { "title": "第二层答案", "body": "这次，时间线没有留下缺口。" } }
+      ]
+    }
+  ]
+}
+```
+
+**Anti-pattern.** “第一次答案错了，请再猜。” A false solution needs
+ending-grade payoff and a named fatal defect; otherwise it is just an extra
+password attempt.
+
+## Pattern 22 — four forms of unreliable narration（叙诡四式）
+
+**Intent.** Mislead through interpretation, never through lying chrome. The
+four reusable content forms are: juxtaposed timelines, identity ambiguity,
+systematic omission, and an anthropomorphized machine narrator.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-unreliable-four",
+  "files": {
+    "甲-聊天记录.txt": {
+      "type": "file",
+      "name": "甲-聊天记录.txt",
+      "ctime": "2003-07-18T10:00:00.000Z",
+      "mtime": "2003-07-18T10:00:00.000Z",
+      "content": "今晚老地方见。"
+    },
+    "乙-聊天记录.txt": {
+      "type": "file",
+      "name": "乙-聊天记录.txt",
+      "ctime": "2004-07-18T10:00:00.000Z",
+      "mtime": "2004-07-18T10:00:00.000Z",
+      "content": "今晚老地方见。"
+    },
+    "小雨的签名.txt": {
+      "type": "file",
+      "name": "小雨的签名.txt",
+      "content": "账号由姐弟二人共用；聊天中的『我』未必是同一个人。"
+    },
+    "家庭通讯录.txt": {
+      "type": "file",
+      "name": "家庭通讯录.txt",
+      "content": "父亲、母亲、长女——每一版都系统性地没有写次子的名字。"
+    },
+    "向日葵日记.txt": {
+      "type": "file",
+      "name": "向日葵日记.txt",
+      "content": "我每天看着门口。『我』其实是宠物摄像头的自动日志。"
+    }
+  }
+}
+```
+
+The two timestamps are truthful; the nickname and first-person voice are
+ambiguous; the omission is real; the machine log describes exactly what its
+sensor observed. Characters may lie inside content, but Properties, timestamps,
+paths, and other interface metadata must not.
+
+**Anti-pattern.** Changing a file's displayed mtime after the reveal or
+inventing an impossible sender in chrome. That withholds the card instead of
+letting the player misread it.
+
+## Pattern 23 — newspaper clue in noise（报纸藏针）
+
+**Intent.** Put one consequential story among eight to twelve era-flavored,
+individually enjoyable items. The clue sits around position four to six: not
+featured, not buried at the absolute bottom.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-newspaper-noise",
+  "sites": {
+    "http://city-morning.example": {
+      "title": "城市早报",
+      "page": {
+        "template": "portal",
+        "title": "城市早报 · 2003 年 7 月 19 日",
+        "masthead": "本市多云，最高 31℃",
+        "sections": [
+          { "heading": "公交月票下周换版", "body": "旧卡可继续使用到月底。" },
+          { "heading": "中学航模队获奖", "body": "队员将于周日返校展示。" },
+          { "heading": "夜市新增旧书摊", "body": "摊主征集九十年代杂志。" },
+          { "heading": "南站末班车临时提前", "body": "昨晚 21:35 后不再检票。" },
+          { "heading": "寻猫启事", "body": "橘猫戴蓝色项圈，胆小怕生。" },
+          { "heading": "磁带修复小窍门", "body": "铅笔可用于手动回卷。" },
+          { "heading": "读者来信：楼道灯", "body": "三单元声控灯终于修好。" },
+          { "heading": "周末电视预告", "body": "科教频道重播深海纪录片。" }
+        ],
+        "footer": "城市早报社版权所有"
+      }
+    }
+  }
+}
+```
+
+The fourth item changes the alibi; the other seven still reward reading with
+period texture, humor, or usable world detail.
+
+**Anti-pattern.** Eleven lorem-ipsum headlines around one clue. Noise that is
+not interesting becomes busywork and trains the player to skim everything.
+
+## Pattern 24 — the midpoint injection（中段注入事件）
+
+**Intent.** When the investigation risks settling, a player action causes a
+new event that changes the situation and naturally produces inspectable
+evidence—the mystery equivalent of a “second body,” not a jump scare.
+
+**Recipe.**
+
+```json
+{
+  "id": "pattern-midpoint-injection",
+  "triggers": [
+    {
+      "id": "inject-after-ledger",
+      "on": "file:open",
+      "when": { "event": { "name": "旧账本.txt" } },
+      "once": true,
+      "do": [
+        {
+          "addFile": {
+            "path": ["Desktop", "刚收到的传真.txt"],
+            "node": {
+              "type": "file",
+              "name": "刚收到的传真.txt",
+              "content": "南站值班员证明：昨晚 21:40 仍有人使用内部电话。"
+            }
+          }
+        },
+        {
+          "notify": {
+            "title": "新传真",
+            "body": "打印机响了一声。桌面上多了一份刚收到的传真。"
+          }
+        }
+      ]
+    },
+    {
+      "id": "inspect-injected-clue",
+      "on": "file:open",
+      "when": { "event": { "name": "刚收到的传真.txt" } },
+      "once": true,
+      "do": [
+        {
+          "note": {
+            "id": "midpoint",
+            "content": "新问题：谁能进入南站值班室？"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Anti-pattern.** A timed scream followed by no artifact, witness, changed
+state, or new question. Atmosphere can punctuate a midpoint, but evidence must
+move it.
+
+---
+
+## Where to go next
+
+- **Runnable end-to-end example:** `referenceContentPack` (exported from
+  `@caoergou/windows-xp`) wires Patterns 8 + 9 + 11 into one mountable pack;
+  [`examples/reference-content-pack/`](../examples/reference-content-pack/) is
+  the same pack in directory form (the `xp-scenario pack` input shape).
+- **A recorded drafting session** — synopsis → draft → lint failures → fixes →
+  solve → pack: [`SCENARIO-AUTHORING-WALKTHROUGH.md`](./SCENARIO-AUTHORING-WALKTHROUGH.md).
+- **The guided workflow for AI assistants:** the repo skill
+  [`.claude/skills/scenario/SKILL.md`](../.claude/skills/scenario/SKILL.md).
+- **The narrative-craft research corpus** (jubensha practice × detective-fiction
+  canon, with an experience→pattern mapping):
+  [`MYSTERY-DESIGN-RESEARCH.md`](./MYSTERY-DESIGN-RESEARCH.md).
+- **Schemas for editors:** `@caoergou/windows-xp/schema/scenario.json` and
+  `…/schema/content-pack.json`.

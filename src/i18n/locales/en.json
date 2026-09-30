@@ -1,0 +1,1308 @@
+{
+  "desktop": {
+    "myComputer": "My Computer",
+    "myDocuments": "My Documents",
+    "recycleBin": "Recycle Bin",
+    "internetExplorer": "Internet Explorer",
+    "networkNeighborhood": "My Network Places",
+    "newFolderName": "New Folder",
+    "newTextDocumentName": "New Text Document.txt",
+    "propertiesTitle": "Display Properties"
+  },
+  "desktopProperties": {
+    "themes": "Themes",
+    "desktop": "Desktop",
+    "screenSaver": "Screen Saver",
+    "appearance": "Appearance",
+    "settings": "Settings",
+    "background": "Background:",
+    "position": "Position:",
+    "stretch": "Stretch",
+    "comingSoon": "This tab is for display only."
+  },
+  "controlPanel": {
+    "title": "Control Panel",
+    "display": "Display",
+    "soundAndAudio": "Sounds and Audio Devices",
+    "mouse": "Mouse",
+    "back": "Back",
+    "ok": "OK",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "categories": {
+      "addRemovePrograms": "Add or Remove Programs",
+      "appearance": "Appearance and Themes",
+      "dateTime": "Date and Time",
+      "display": "Display",
+      "folderOptions": "Folder Options",
+      "fonts": "Fonts",
+      "keyboard": "Keyboard",
+      "mouse": "Mouse",
+      "network": "Network Connections",
+      "userAccounts": "User Accounts",
+      "sound": "Sounds and Audio Devices",
+      "system": "System"
+    },
+    "systemLanguage": {
+      "title": "Language settings",
+      "label": "System language:",
+      "restartTitle": "Restart Windows",
+      "restartMessage": "Windows must restart to apply the new language. Restart now?"
+    },
+    "displaySettings": {
+      "wallpaper": "Wallpaper:",
+      "resolution": "Screen resolution:",
+      "screensaver": "Screen saver:",
+      "screensaverNone": "(None)",
+      "screensaverLogo": "Windows XP logo",
+      "preview": "Preview"
+    },
+    "soundSettings": {
+      "volume": "Device volume",
+      "mute": "Mute(M)",
+      "soundScheme": "Sound scheme",
+      "programEvents": "Program events:",
+      "play": "Play",
+      "events": {
+        "startup": "Windows Startup",
+        "shutdown": "Windows Shutdown",
+        "error": "Critical Stop",
+        "ding": "Default Beep",
+        "exclamation": "Exclamation",
+        "notify": "Notify",
+        "menuCommand": "Menu Command",
+        "minimize": "Minimize",
+        "restore": "Restore",
+        "recycle": "Empty Recycle Bin"
+      }
+    },
+    "mouseSettings": {
+      "pointerSpeed": "Pointer speed:",
+      "doubleClickSpeed": "Double-click speed:",
+      "pointerTrails": "Show pointer trails"
+    }
+  },
+  "startMenu": {
+    "recentDocuments": "My Recent Documents",
+    "allPrograms": "All Programs",
+    "myDocuments": "My Documents",
+    "myComputer": "My Computer",
+    "myPictures": "My Pictures",
+    "myMusic": "My Music",
+    "myVideos": "My Videos",
+    "controlPanel": "Control Panel",
+    "printersAndFaxes": "Printers and Faxes",
+    "search": "Search",
+    "searchPlaceholder": "Type here to search...",
+    "help": "Help and Support",
+    "run": "Run...",
+    "logOff": "Log Off",
+    "turnOff": "Turn Off Computer",
+    "apps": {
+      "internetExplorer": "Internet Explorer",
+      "qq": "QQ",
+      "qqMail": "QQ Mail",
+      "wpsOffice": "WPS Office",
+      "baofeng": "Baofeng Player",
+      "thunder": "Thunder",
+      "safeGuard": "360 Safe Guard",
+      "kugou": "Kugou Music",
+      "ttplayer": "TTPlayer",
+      "msn": "MSN Messenger",
+      "microsoftOffice": "Microsoft Office",
+      "winamp": "Winamp",
+      "utorrent": "uTorrent",
+      "norton": "Norton AntiVirus",
+      "itunes": "iTunes"
+    }
+  },
+  "taskbar": {
+    "start": "Start",
+    "context": {
+      "toolbars": "Toolbars",
+      "quickLaunch": "Quick Launch",
+      "cascade": "Cascade Windows",
+      "tileHorizontally": "Tile Windows Horizontally",
+      "tileVertically": "Tile Windows Vertically",
+      "showDesktop": "Show the Desktop",
+      "taskManager": "Task Manager",
+      "lockTaskbar": "Lock the Taskbar",
+      "properties": "Properties"
+    }
+  },
+  "taskManager": {
+    "title": "Windows Task Manager",
+    "applications": "Applications",
+    "processes": "Processes",
+    "performance": "Performance",
+    "task": "Task",
+    "status": "Status",
+    "running": "Running",
+    "switchTo": "Switch To",
+    "endTask": "End Task",
+    "newTask": "New Task...",
+    "endProcess": "End Process",
+    "tasksLabel": "The following tasks are running:",
+    "menu": {
+      "file": "File",
+      "options": "Options",
+      "view": "View",
+      "windows": "Windows",
+      "help": "Help"
+    },
+    "menuItems": {
+      "newTask": "New Task (Run...)",
+      "exit": "Exit Task Manager",
+      "alwaysOnTop": "Always On Top",
+      "minimizeOnUse": "Minimize On Use",
+      "hideWhenMinimized": "Hide When Minimized",
+      "refreshNow": "Refresh Now",
+      "updateSpeed": "Update Speed",
+      "tileHorizontally": "Tile Horizontally",
+      "tileVertically": "Tile Vertically",
+      "cascade": "Cascade",
+      "helpTopics": "Task Manager Help Topics",
+      "about": "About Windows Task Manager"
+    },
+    "columns": {
+      "imageName": "Image Name",
+      "userName": "User Name",
+      "cpu": "CPU",
+      "memUsage": "Mem Usage"
+    },
+    "statusBar": {
+      "processes": "Processes: {{count}}",
+      "cpuUsage": "CPU Usage: {{percent}}%",
+      "commitCharge": "Commit Charge: {{current}}M / {{limit}}M"
+    },
+    "warning": {
+      "title": "Task Manager Warning",
+      "message": "WARNING: Terminating a process can cause undesirable results including loss of data and system instability. The process will not be given the chance to save its state or data before it is terminated. Are you sure you want to terminate the process?",
+      "confirm": "Yes"
+    },
+    "perf": {
+      "cpuUsage": "CPU Usage",
+      "cpuUsageHistory": "CPU Usage History",
+      "pfUsage": "PF Usage",
+      "pageFileUsageHistory": "Page File Usage History",
+      "totals": "Totals",
+      "handles": "Handles",
+      "threads": "Threads",
+      "processes": "Processes",
+      "commitCharge": "Commit Charge (K)",
+      "physicalMemory": "Physical Memory (K)",
+      "kernelMemory": "Kernel Memory (K)",
+      "total": "Total",
+      "limit": "Limit",
+      "peak": "Peak",
+      "available": "Available",
+      "systemCache": "System Cache",
+      "paged": "Paged",
+      "nonpaged": "Nonpaged"
+    },
+    "about": {
+      "title": "About Windows Task Manager",
+      "message": "Microsoft (R) Windows Task Manager\nVersion 5.1 (Build 2600.xpsp_sp3)\nCopyright (C) 1985-2001 Microsoft Corp."
+    }
+  },
+  "tray": {
+    "volume": "Volume",
+    "mute": "Mute",
+    "networkConnected": "Network connected",
+    "safeGuardReminder": "360 Safe Guard Alert",
+    "safeGuardStatus": "Your computer is protected"
+  },
+  "volumeControl": {
+    "title": "Volume Control",
+    "menu": {
+      "options": "Options",
+      "help": "Help"
+    },
+    "menuItems": {
+      "properties": "Properties",
+      "advancedControls": "Advanced Controls",
+      "exit": "Exit",
+      "about": "About Volume Control"
+    },
+    "channels": {
+      "master": "Volume Control",
+      "wave": "Wave",
+      "swSynth": "SW Synth",
+      "cd": "CD Audio"
+    },
+    "balance": "Balance:",
+    "volume": "Volume:",
+    "mute": "Mute",
+    "muteAll": "Mute all",
+    "about": {
+      "title": "About Volume Control",
+      "message": "Volume Control for Windows XP."
+    }
+  },
+  "calendar": {
+    "monthNames": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "weekdays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    "today": "Today"
+  },
+  "window": {
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore",
+    "move": "Move",
+    "size": "Size",
+    "close": "Close",
+    "minimizeGroup": "Minimize Group",
+    "closeGroup": "Close Group"
+  },
+  "explorer": {
+    "details": {
+      "name": "Name",
+      "size": "Size",
+      "type": "Type",
+      "dateModified": "Date Modified"
+    },
+    "file": "File",
+    "edit": "Edit",
+    "view": "View",
+    "favorites": "Favorites",
+    "tools": "Tools",
+    "help": "Help",
+    "back": "Back",
+    "forward": "Forward",
+    "up": "Up",
+    "search": "Search",
+    "folders": "Folders",
+    "address": "Address",
+    "upload": "Upload File",
+    "objectCount": "{{count}} object(s)",
+    "showHiddenFiles": "Show Hidden Files",
+    "protected": {
+      "title": "Error Deleting File or Folder",
+      "deleteMessage": "Cannot delete {{name}}: it is a protected system file.",
+      "renameMessage": "Cannot rename {{name}}: it is a protected system file."
+    },
+    "groups": {
+      "hardDisks": "Hard Disk Drives",
+      "removableStorage": "Devices with Removable Storage",
+      "other": "Other"
+    },
+    "path": {
+      "localDisk": "Local Disk ({{drive}})",
+      "opticalDrive": "DVD/CD-RW Drive ({{drive}})"
+    },
+    "types": {
+      "folder": "File Folder",
+      "localDisk": "Local Disk",
+      "opticalDrive": "CD Drive",
+      "file": "File",
+      "systemFolder": "System Folder"
+    },
+    "fileTypes": {
+      "generic": "{{ext}} File",
+      "noExtension": "File",
+      "txt": "Text Document",
+      "jpg": "JPEG Image",
+      "jpeg": "JPEG Image",
+      "bmp": "Bitmap Image",
+      "png": "PNG Image",
+      "gif": "GIF Image",
+      "ico": "Icon",
+      "mp3": "MP3 Format Sound",
+      "wav": "Wave Sound",
+      "m3u": "Winamp Media File",
+      "zip": "Compressed (zipped) Folder",
+      "html": "HTML Document",
+      "htm": "HTML Document",
+      "url": "Internet Shortcut",
+      "exe": "Application",
+      "lnk": "Shortcut",
+      "ini": "Configuration Settings",
+      "doc": "WordPad Document"
+    },
+    "sidebar": {
+      "systemTasks": "System Tasks",
+      "otherPlaces": "Other Places",
+      "details": "Details",
+      "viewSystemInfo": "View system information",
+      "addRemovePrograms": "Add or remove programs",
+      "changeSettings": "Change a setting",
+      "expand": "Expand",
+      "collapse": "Collapse"
+    },
+    "errors": {
+      "pathNotFound": "Windows cannot find this path.",
+      "damaged": "The disk or file is damaged and cannot be opened."
+    },
+    "password": {
+      "title": "Enter Password",
+      "message": "This folder is encrypted. Enter the password to open it."
+    },
+    "recycleBin": {
+      "restore": "Restore",
+      "empty": "Empty Recycle Bin",
+      "emptyTitle": "Empty Recycle Bin",
+      "emptyConfirm": "Are you sure you want to permanently delete all items in the Recycle Bin?",
+      "emptyMessage": "The Recycle Bin is empty."
+    },
+    "menuItems": {
+      "newWindow": "New Window(N)",
+      "close": "Close(C)",
+      "selectAll": "Select All(A)",
+      "refresh": "Refresh(R)",
+      "toolbars": "Toolbars(T)",
+      "statusBar": "Status Bar(B)",
+      "explorerBar": "Explorer Bar(E)",
+      "thumbnails": "Thumbnails(H)",
+      "tiles": "Tiles(S)",
+      "icons": "Icons(N)",
+      "list": "List(L)",
+      "details": "Details(D)",
+      "addToFavorites": "Add to Favorites(A)...",
+      "organizeFavorites": "Organize Favorites(O)...",
+      "mapNetworkDrive": "Map Network Drive(N)...",
+      "disconnectNetworkDrive": "Disconnect Network Drive(D)...",
+      "folderOptions": "Folder Options(O)...",
+      "helpTopics": "Help Topics(H)",
+      "aboutWindows": "About Windows(A)"
+    }
+  },
+  "contextMenu": {
+    "open": "Open",
+    "explore": "Explore",
+    "search": "Search",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "delete": "Delete",
+    "rename": "Rename",
+    "properties": "Properties",
+    "refresh": "Refresh",
+    "new": "New",
+    "newFolder": "Folder",
+    "newTextDocument": "Text Document"
+  },
+  "login": {
+    "welcome": "Welcome",
+    "toLogOn": "To begin, click your user name",
+    "username": "User",
+    "password": "Password",
+    "login": "Log In",
+    "turnOff": "Turn off computer",
+    "incorrectPassword": "Incorrect password",
+    "forgotPasswordHint": "Forgot password? View README"
+  },
+  "paperOS": {
+    "name": "Paper OS"
+  },
+  "shutdown": {
+    "title": "Turn off computer",
+    "message": "What do you want the computer to do?",
+    "standBy": "Stand by",
+    "turnOff": "Turn off",
+    "restart": "Restart",
+    "cancel": "Cancel"
+  },
+  "apps": {
+    "evidenceReport": "Evidence Report",
+    "recentDocuments": "My Recent Documents",
+    "explorer": "Windows Explorer",
+    "notepad": "Notepad",
+    "markdownViewer": "Markdown Viewer",
+    "paint": "Paint",
+    "calculator": "Calculator",
+    "commandPrompt": "Command Prompt",
+    "volumeControl": "Volume Control",
+    "networkConnections": "Network Connections",
+    "minesweeper": "Minesweeper",
+    "solitaire": "Solitaire",
+    "deductionSheet": "Deduction Sheet",
+    "evidenceBoard": "Evidence Board",
+    "wordpad": "WordPad",
+    "mediaPlayer": "Windows Media Player",
+    "messenger": "MSN Messenger",
+    "outlook": "Outlook Express",
+    "homeDoorTV": "Home Door TV",
+    "comingSoon": "This feature is coming soon!"
+  },
+  "homeDoorTV": {
+    "camera": "Front Door Camera 1",
+    "refresh": "Refresh",
+    "feedAlt": "Front door camera feed showing a delivered parcel",
+    "deliveryNotice": "A parcel was detected at the door. The courier has left.",
+    "online": "Camera online",
+    "recording": "Recording: normal"
+  },
+  "networkConnections": {
+    "title": "Network Connections",
+    "localConnection": "Local Area Connection",
+    "wirelessConnection": "Wireless Network Connection",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "local": "Local",
+    "wireless": "Wireless",
+    "statusTitle": "Local Area Connection Status",
+    "lanGroup": "LAN or High-Speed Internet",
+    "generalTab": "General",
+    "supportTab": "Support",
+    "connectionGroup": "Connection",
+    "activityGroup": "Activity",
+    "status": "Status",
+    "duration": "Duration",
+    "speed": "Speed",
+    "speedValue": "100.0 Mbps",
+    "sent": "Sent",
+    "received": "Received",
+    "packets": "Packets",
+    "bytesLabel": "Bytes",
+    "properties": "Properties",
+    "disable": "Disable",
+    "close": "Close",
+    "connectionStatusGroup": "Connection status",
+    "addressType": "Address Type",
+    "assignedByDhcp": "Assigned by DHCP",
+    "ipAddress": "IP Address",
+    "subnetMask": "Subnet Mask",
+    "defaultGateway": "Default Gateway",
+    "repair": "Repair",
+    "repairing": "Repairing...",
+    "repairSuccess": "The connection has been repaired.",
+    "details": "Details...",
+    "bytes": "{{value}} bytes"
+  },
+  "errorBoundary": {
+    "title": "Application Error",
+    "message": "This application has encountered a problem and cannot continue.",
+    "details": "View details"
+  },
+  "notepad": {
+    "untitled": "Untitled",
+    "untitledFile": "Untitled.txt",
+    "cursorPosition": "Ln {{line}}, Col {{column}}",
+    "menu": {
+      "file": "File(F)",
+      "edit": "Edit(E)",
+      "format": "Format(O)",
+      "view": "View(V)",
+      "help": "Help(H)"
+    },
+    "menuitems": {
+      "new": "New(N)",
+      "open": "Open(O)...",
+      "save": "Save(S)",
+      "saveAs": "Save As(A)...",
+      "pageSetup": "Page Setup(U)...",
+      "print": "Print(P)...",
+      "exit": "Exit(X)",
+      "undo": "Undo(U)",
+      "redo": "Redo(R)",
+      "cut": "Cut(T)",
+      "copy": "Copy(C)",
+      "paste": "Paste(P)",
+      "delete": "Delete(L)",
+      "find": "Find(F)...",
+      "replace": "Replace(R)...",
+      "goTo": "Go To(G)...",
+      "selectAll": "Select All(A)",
+      "wrap": "Word Wrap(W)",
+      "font": "Font(F)...",
+      "statusBar": "Status Bar(S)",
+      "help": "View Help(V)",
+      "about": "About Notepad(A)...",
+      "download": "Download to Local Disk..."
+    },
+    "dialogs": {
+      "unsavedChanges": "The text in the file has changed. Do you want to save the changes?",
+      "saveChanges": "Save(S)",
+      "dontSave": "Don't Save(N)",
+      "openTitle": "Open",
+      "openPrompt": "Enter a file path, for example: My Documents\\readme.txt",
+      "fileNotFound": "The file could not be found.",
+      "cannotOpenFolder": "This folder cannot be opened.",
+      "unsupportedType": "Notepad cannot read this file type.",
+      "fileExists": "The file \"{{name}}\" already exists. Do you want to replace it?",
+      "saveTitle": "Save",
+      "readOnly": "This file is read-only.",
+      "saveAsTitle": "Save As",
+      "saveAsPrompt": "Enter a file name and path, for example: My Documents\\newfile.txt",
+      "pathNotFound": "The path does not exist.",
+      "invalidPath": "The path is invalid."
+    },
+    "find": {
+      "title": "Find",
+      "findWhat": "Find what:",
+      "findNext": "Find Next",
+      "notFound": "Cannot find \"{{query}}\"."
+    },
+    "replace": {
+      "title": "Replace",
+      "findWhat": "Find what:",
+      "replaceWith": "Replace with:",
+      "replace": "Replace",
+      "replaceAll": "Replace All",
+      "replacedCount": "Replaced {{count}} occurrences."
+    },
+    "about": {
+      "title": "About Notepad",
+      "message": "Windows XP Notepad\nVersion 1.0\n\n© 2026 Windows XP Simulator"
+    }
+  },
+  "minesweeper": {
+    "menu": {
+      "game": "Game(G)",
+      "help": "Help(H)"
+    },
+    "menuItems": {
+      "new": "New(N)",
+      "beginner": "Beginner(B)",
+      "intermediate": "Intermediate(I)",
+      "expert": "Expert(E)",
+      "exit": "Exit(X)",
+      "about": "About Minesweeper(A)..."
+    },
+    "aria": {
+      "newGame": "New game"
+    },
+    "about": {
+      "title": "About Minesweeper",
+      "message": "Microsoft Minesweeper\nVersion 5.1",
+      "ok": "OK"
+    }
+  },
+  "fileSystem": {
+    "name": "Name",
+    "size": "Size",
+    "type": "Type",
+    "dateModified": "Date Modified",
+    "folder": "Folder",
+    "file": "File"
+  },
+  "evidenceReport": {
+    "title": "Evidence Report",
+    "confidence": "Confidence",
+    "note": "Notes",
+    "submit": "Submit Report",
+    "confidences": {
+      "proven": "Proven",
+      "probable": "Highly probable",
+      "unconfirmed": "Unconfirmed",
+      "refuted": "Refuted"
+    },
+    "results": {
+      "supported": "Supported by the cited evidence",
+      "under-supported": "Direction plausible, evidence insufficient",
+      "conflicted": "The cited evidence conflicts",
+      "unknown": "Not established"
+    }
+  },
+  "print": {
+    "document": "Document Name",
+    "status": "Status",
+    "owner": "Owner",
+    "pages": "Pages",
+    "size": "Size",
+    "submitted": "Submitted",
+    "pause": "Pause",
+    "resume": "Resume",
+    "cancel": "Cancel",
+    "noSource": "Original source is unavailable",
+    "noSpoolFile": "No spool file name",
+    "statuses": {
+      "queued": "Queued",
+      "printing": "Printing",
+      "paused": "Paused",
+      "error": "Error",
+      "completed": "Completed",
+      "deleted": "Deleted",
+      "orphaned": "Orphaned"
+    }
+  },
+  "recentDocuments": {
+    "seeded": "History",
+    "runtime": "Current session"
+  },
+  "clock": {
+    "dateTime": "Date and time"
+  },
+  "common": {
+    "error": "Error",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "deleteConfirmTitle": "Confirm Delete",
+    "deleteConfirmSingle": "Are you sure you want to move \"{{name}}\" to the Recycle Bin?",
+    "deleteConfirmMultiple": "Are you sure you want to move these {{count}} items to the Recycle Bin?",
+    "renameTitle": "Rename",
+    "renamePrompt": "Enter a new name:",
+    "propertiesTitle": "{{name}} Properties",
+    "apply": "Apply"
+  },
+  "passwordDialog": {
+    "defaultTitle": "Enter password",
+    "defaultMessage": "This content is encrypted. Please enter the password to access it.",
+    "hintPrefix": "Hint:",
+    "placeholder": "Enter password...",
+    "emptyError": "Please enter a password",
+    "incorrectError": "Incorrect password. Please try again."
+  },
+  "runDialog": {
+    "description": "Type the name of a program, folder, document, or Internet resource, and Windows will open it for you.",
+    "open": "Open:",
+    "browse": "Browse...",
+    "errorTitle": "Run",
+    "errorMessage": "Windows cannot find '{{command}}'. Make sure you typed the name correctly, and then try again."
+  },
+  "altTab": {
+    "switchWindow": "Switch windows"
+  },
+  "screensaver": {
+    "dismissHint": "Click or press any key to continue..."
+  },
+  "errors": {
+    "program": "Program",
+    "fileNotFound": "File not found",
+    "fileNotFoundMessage": "Windows cannot find \"{{name}}\". Check the spelling and try again.",
+    "accessDenied": "Access denied",
+    "invalidOperation": "Invalid operation"
+  },
+  "settings": {
+    "language": "Language",
+    "english": "English",
+    "chinese": "简体中文"
+  },
+  "internetExplorer": {
+    "history": "History",
+    "noHistory": "No history",
+    "status": {
+      "done": "Done",
+      "opening": "Opening page",
+      "cannotDisplay": "Cannot display page"
+    },
+    "errorPage": {
+      "title": "Cannot display the page",
+      "description": "The page you are looking for is currently unavailable. The Web site might be experiencing technical difficulties, or you may need to adjust your browser settings.",
+      "diagnose": "Diagnose connection problems",
+      "refresh": "Refresh",
+      "possibleActions": "Most likely causes:",
+      "clickRefresh": "Click the Refresh button, or try again later.",
+      "checkAddress": "If you typed the page address in the Address bar, make sure that it is spelled correctly.",
+      "checkConnection": "Check your network connection and proxy settings.",
+      "notFound": "404 - Not Found"
+    },
+    "hao123": {
+      "searchPlaceholder": "Baidu once and you'll know",
+      "searchButton": "Baidu Search",
+      "banner": "hao123 Navigation — China's largest web directory, hand-picking the most popular sites for you",
+      "setHomepage": "Set as homepage",
+      "slogan": "Baidu-owned site · Fueling China's Internet",
+      "tabs": {
+        "nav": "Web Directory",
+        "shopping": "Shopping",
+        "ent": "Video & Music",
+        "travel": "Travel",
+        "news": "News"
+      },
+      "searchEngines": "Search Engines",
+      "email": "Email",
+      "shopping": "Shopping",
+      "video": "Video",
+      "news": "News",
+      "social": "Social",
+      "music": "Music",
+      "games": "Games",
+      "travel": "Travel",
+      "finance": "Finance",
+      "forums": "Forums",
+      "tools": "Tools",
+      "baidu": "Baidu",
+      "google": "Google",
+      "sogou": "Sogou",
+      "yahoo": "Yahoo! China",
+      "qqMail": "QQ Mail",
+      "163Mail": "163 Mail",
+      "126Mail": "126 Mail",
+      "sinaMail": "Sina Mail",
+      "taobao": "Taobao",
+      "paipai": "Paipai",
+      "dangdang": "Dangdang",
+      "amazon": "Joyo Amazon",
+      "eachnet": "EachNet",
+      "youku": "Youku",
+      "tudou": "Tudou",
+      "baofeng": "Baofeng",
+      "56": "56.com",
+      "sohuTv": "Sohu TV",
+      "sina": "Sina",
+      "163": "NetEase",
+      "sohu": "Sohu",
+      "qq": "Tencent",
+      "ifeng": "Ifeng",
+      "people": "People.com.cn",
+      "qzone": "QZone",
+      "xiaonei": "Xiaonei",
+      "douban": "Douban",
+      "kaixin": "Kaixin001",
+      "kugou": "Kugou",
+      "qqMusic": "QQ Music",
+      "xiami": "Xiami",
+      "kuwo": "Kuwo",
+      "baiduMp3": "Baidu MP3",
+      "qqGames": "QQ Games",
+      "4399": "4399 Games",
+      "7k7k": "7k7k Games",
+      "17173": "17173",
+      "the9": "The9",
+      "ctrip": "Ctrip",
+      "elong": "eLong",
+      "qunar": "Qunar",
+      "airchina": "Air China",
+      "icbc": "ICBC",
+      "ccb": "CCB",
+      "cmb": "CMB",
+      "abc": "ABC",
+      "tieba": "Tieba",
+      "tianya": "Tianya",
+      "mop": "Mop",
+      "xici": "Xici Hutong",
+      "rongshu": "Rongshuxia",
+      "weather": "Weather",
+      "mapBaidu": "Baidu Map",
+      "mapGoogle": "Google Map",
+      "dict": "Baidu Dict"
+    },
+    "toolbar": {
+      "back": "Back",
+      "forward": "Forward",
+      "stop": "Stop",
+      "refresh": "Refresh",
+      "home": "Home",
+      "search": "Search",
+      "favorites": "Favorites",
+      "history": "History"
+    },
+    "addressBar": {
+      "go": "Go"
+    },
+    "menu": {
+      "file": "File(F)",
+      "edit": "Edit(E)",
+      "view": "View(V)",
+      "favorites": "Favorites(A)",
+      "tools": "Tools(T)",
+      "help": "Help(H)"
+    },
+    "menuitems": {
+      "new": "New(N)",
+      "open": "Open(O)...",
+      "save": "Save(S)",
+      "saveAs": "Save As(A)...",
+      "pageSetup": "Page Setup(U)...",
+      "printPreview": "Print Preview(V)",
+      "print": "Print(P)...",
+      "close": "Close(C)",
+      "cut": "Cut(T)",
+      "copy": "Copy(C)",
+      "paste": "Paste(V)",
+      "selectAll": "Select All(A)",
+      "find": "Find(F)...",
+      "toolbar": "Toolbar(T)",
+      "statusBar": "Status Bar(B)",
+      "refresh": "Refresh(R)",
+      "fullScreen": "Full Screen(U)",
+      "textSize": "Text Size(X)",
+      "encoding": "Encoding(D)",
+      "addToFavorites": "Add to Favorites(A)...",
+      "organizeFavorites": "Organize Favorites(O)...",
+      "email": "Mail and News(M)",
+      "internetOptions": "Internet Options(O)...",
+      "helpTopics": "Help Topics(C)",
+      "about": "About Internet Explorer(A)"
+    }
+  },
+  "qq": {
+    "archive": {
+      "title": "Message History Manager",
+      "search": "Search message history",
+      "searchLabel": "Find:",
+      "searchPlaceholder": "Enter keyword",
+      "import": "Import",
+      "export": "Export",
+      "delete": "Delete",
+      "importHint": "Import message history (unavailable in this read-only demo)",
+      "exportHint": "Export message history (unavailable in this read-only demo)",
+      "contacts": "Contacts",
+      "groups": "Groups",
+      "localRecords": "Local Message History",
+      "groupChat": "Group chat",
+      "friend": "QQ contact",
+      "noConversation": "No conversation selected",
+      "recordCount": "{{count}} messages",
+      "selectConversation": "Select a contact or group on the left",
+      "view": "View:",
+      "dateRange": "Date range",
+      "allRecords": "All message history",
+      "searchResults": "{{count}} found",
+      "localOnly": "Local message history",
+      "noMatches": "No matching messages",
+      "noMatchesHint": "Try another keyword or conversation.",
+      "empty": "No message archive is mounted.",
+      "emptyHint": "Provide qqArchives through a content pack.",
+      "firstPage": "First",
+      "previousPage": "Previous",
+      "nextPage": "Next",
+      "lastPage": "Last",
+      "status": "Message History Manager",
+      "totalMessages": "{{count}} messages total",
+      "groupPrefix": "Group: ",
+      "attachment": "Attachment: {{name}}"
+    },
+    "groupChat": {
+      "windowTitle": "{{title}} - Group Chat",
+      "noConversationTitle": "Group Chat",
+      "noConversationHint": "No group conversation is mounted.",
+      "noMessages": "No messages yet.",
+      "identity": "{{title}} ({{count}} members)",
+      "members": "Group members ({{count}})",
+      "groupInfo": "Group info",
+      "groupFiles": "Group files",
+      "groupAlbum": "Group album",
+      "invite": "Invite",
+      "font": "Font",
+      "emoji": "Emoticons",
+      "picture": "Send picture",
+      "screenshot": "Screen capture",
+      "composer": "Group message",
+      "history": "Message history(H)",
+      "messageMode": "Message mode(T)",
+      "close": "Close(C)",
+      "send": "Send(S)"
+    },
+    "title": "QQ",
+    "login": {
+      "accountLabel": "QQ Number:",
+      "accountPlaceholder": "QQ Number",
+      "passwordLabel": "Password:",
+      "passwordPlaceholder": "Enter password",
+      "captchaLabel": "Captcha:",
+      "captchaPlaceholder": "Enter captcha",
+      "rememberPassword": "Remember password",
+      "autoLogin": "Auto-login",
+      "invisibleLogin": "Invisible login",
+      "advancedSettings": "Advanced",
+      "loginButton": "Login",
+      "cancelButton": "Cancel",
+      "register": "Register",
+      "forgotPassword": "Forgot password",
+      "appeal": "Appeal ban",
+      "enterCaptcha": "Please enter the captcha",
+      "captchaError": "Incorrect captcha, please try again",
+      "loggingIn": "Logging in…",
+      "versionTooOld": "Your QQ version is too old to log in.\nPlease download the latest version from the official website."
+    },
+    "chatTitle": "与 {{nickname}} 聊天中"
+  },
+  "safeGuard360": {
+    "title": "360 Safe Guard",
+    "version": "4.0 Final",
+    "healthScore": "Health Score",
+    "toolbar": {
+      "computerCheckup": "Checkup",
+      "trojanScan": "Trojan Scan",
+      "pluginCleanup": "Plugin Cleanup",
+      "vulnerabilityFix": "Vulnerability Fix"
+    },
+    "status": {
+      "firewall": "Trojan Firewall",
+      "vulnerabilities": "Vulnerabilities",
+      "viruses": "Viruses Blocked",
+      "on": "On"
+    },
+    "progress": {
+      "realtimeProtection": "Realtime Protection"
+    },
+    "scan": {
+      "quickScan": "Scan Now",
+      "scanning": "Scanning…",
+      "resultSafe": "Your computer is very safe. Keep it up!",
+      "threatsFound": "{{count}} trojan(s) found!",
+      "threatPrefix": "Trojan",
+      "cleanButton": "Clean Now",
+      "cleaned": "Threats removed. Your computer is now safe!"
+    },
+    "footer": {
+      "lastScan": "Last Scan",
+      "never": "Never",
+      "updateTime": "Definitions Date"
+    }
+  },
+  "solitaire": {
+    "won": "You won!",
+    "menu": {
+      "game": "Game(G)",
+      "help": "Help(H)"
+    },
+    "menuItems": {
+      "new": "New Game",
+      "undo": "Undo",
+      "drawOne": "Draw One",
+      "drawThree": "Draw Three",
+      "exit": "Exit",
+      "about": "About Solitaire"
+    },
+    "status": {
+      "score": "Score: {{score}}",
+      "time": "Time: {{time}}"
+    },
+    "about": {
+      "title": "About Solitaire",
+      "message": "Microsoft Solitaire\nVersion 5.1",
+      "ok": "OK"
+    }
+  },
+  "mediaPlayer": {
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "previous": "Previous",
+    "next": "Next",
+    "playing": "Now playing",
+    "stopped": "Stopped"
+  },
+  "thunder": {
+    "title": "Thunder 5",
+    "version": "5.9 Stable",
+    "newTask": "New",
+    "start": "Start",
+    "pause": "Pause",
+    "delete": "Delete",
+    "columnName": "Name",
+    "columnProgress": "Progress",
+    "columnSpeed": "Speed",
+    "columnStatus": "Status",
+    "columnSize": "Size",
+    "statusWaiting": "Waiting",
+    "statusDownloading": "Downloading",
+    "statusPaused": "Paused",
+    "statusCompleted": "Completed",
+    "statusError": "Error",
+    "empty": "No download tasks",
+    "statusCount": "{{count}} task(s)",
+    "statusSpeed": "Download Speed"
+  },
+  "kugouMusic": {
+    "title": "Kugou Music",
+    "version": "2010 Edition",
+    "playlist": "Playlist",
+    "search": "Search",
+    "onlineMusic": "Online Music",
+    "columnTitle": "Title",
+    "columnArtist": "Artist",
+    "columnDuration": "Duration",
+    "previous": "Previous",
+    "next": "Next",
+    "playPause": "Play/Pause",
+    "volume": "Volume",
+    "nowPlaying": "Now playing: {{title}} - {{artist}}",
+    "stopped": "Stopped",
+    "statusCount": "{{count}} song(s)",
+    "statusPlaying": "Playing",
+    "statusReady": "Ready"
+  },
+  "ttplayer": {
+    "title": "TTPlayer",
+    "version": "5.0 Classic",
+    "playlist": "Playlist",
+    "lyrics": "Lyrics",
+    "about": "About",
+    "close": "Close",
+    "add": "Add",
+    "remove": "Remove",
+    "previous": "Previous",
+    "next": "Next",
+    "playPause": "Play/Pause",
+    "stop": "Stop",
+    "volume": "Volume",
+    "modeLoop": "Repeat all",
+    "modeOne": "Repeat one",
+    "aboutRef": "Layout reference: the open-source remake haixiangyan/ttplayer (MIT License, by haixiangyan).",
+    "aboutCredit": "Self-drawn homage UI and icon; TTPlayer assets and trademarks belong to their original owners. Sample lyrics are original placeholder texts.",
+    "statusCount": "{{count}} song(s)",
+    "statusPlaying": "Playing",
+    "statusReady": "Ready"
+  },
+  "photoViewer": {
+    "title": "Windows Picture and Fax Viewer",
+    "noImageSelected": "No image selected",
+    "view": "View",
+    "viewProperties": "View properties",
+    "ready": "Ready"
+  },
+  "fileProperties": {
+    "unknown": "Unknown",
+    "general": "General",
+    "summary": "Summary",
+    "fileType": "Type of file",
+    "location": "Location",
+    "desktop": "Desktop",
+    "size": "Size",
+    "bytes": "{{count}} bytes",
+    "objectCount": "{{count}} objects",
+    "created": "Created",
+    "modified": "Modified",
+    "accessed": "Accessed",
+    "status": "Status",
+    "encrypted": "Encrypted",
+    "damaged": "Damaged",
+    "image": "Image",
+    "cameraModel": "Camera model",
+    "manufacturer": "Manufacturer",
+    "shootingParameters": "Shooting parameters",
+    "aperture": "Aperture",
+    "exposureTime": "Exposure time",
+    "seconds": "{{value}} seconds",
+    "isoSpeed": "ISO speed",
+    "focalLength": "Focal length",
+    "origin": "Origin",
+    "dateTaken": "Date taken",
+    "noSummary": "No summary information is available"
+  },
+  "paint": {
+    "untitled": "Untitled",
+    "untitledFile": "Untitled.png",
+    "clear": "Clear",
+    "menu": {
+      "file": "File(F)",
+      "edit": "Edit(E)",
+      "view": "View(V)",
+      "help": "Help(H)"
+    },
+    "menuitems": {
+      "new": "New(N)",
+      "open": "Open(O)...",
+      "save": "Save(S)",
+      "saveAs": "Save As(A)...",
+      "exit": "Exit(X)",
+      "undo": "Undo(U)",
+      "cut": "Cut(T)",
+      "copy": "Copy(C)",
+      "paste": "Paste(P)",
+      "delete": "Delete(L)",
+      "selectAll": "Select All(A)",
+      "toolbox": "Toolbox(T)",
+      "colorBox": "Color Box(C)",
+      "statusBar": "Status Bar(S)",
+      "helpTopics": "Help Topics(H)",
+      "about": "About Paint(A)..."
+    },
+    "dialogs": {
+      "loadFailed": "The image could not be loaded.",
+      "unsavedChanges": "The image has changed. Do you want to save the changes?",
+      "openTitle": "Open",
+      "openPrompt": "Enter an image path, for example: My Documents\\My Pictures\\image.png",
+      "fileNotFound": "The file could not be found.",
+      "cannotOpenFolder": "This folder cannot be opened.",
+      "unsupportedType": "Paint cannot read this file type.",
+      "saveTitle": "Save",
+      "readOnly": "This file is read-only.",
+      "saveAsTitle": "Save As",
+      "saveAsPrompt": "Enter a file name and path:",
+      "pathNotFound": "The path does not exist.",
+      "invalidPath": "The path is invalid.",
+      "fileExists": "The file \"{{name}}\" already exists. Do you want to replace it?"
+    }
+  },
+  "wpsOffice": {
+    "title": "WPS Office",
+    "menu": {
+      "file": "File(F)",
+      "edit": "Edit(E)",
+      "view": "View(V)",
+      "insert": "Insert(I)",
+      "format": "Format(O)",
+      "tools": "Tools(T)",
+      "help": "Help(H)"
+    },
+    "toolbar": {
+      "new": "New",
+      "open": "Open",
+      "save": "Save",
+      "print": "Print",
+      "preview": "Preview"
+    },
+    "documentTitle": "My Document",
+    "paragraph1": "Welcome to WPS Office word processor.",
+    "paragraph2": "This is a classic office suite shell that recreates the familiar WPS experience from the 2000s.",
+    "paragraph3": "Edit documents and explore the nostalgic office atmosphere here.",
+    "status": {
+      "ready": "Ready",
+      "zoom": "Zoom {{zoom}}%"
+    }
+  },
+  "baofengPlayer": {
+    "title": "Baofeng Player",
+    "version": "3.6 Smart Edition",
+    "brand": "Baofeng Player",
+    "openFileHint": "Click to open file",
+    "playing": "Now playing",
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop",
+    "fullscreen": "Full Screen",
+    "playlist": "Playlist",
+    "volumeLabel": "Volume",
+    "status": {
+      "ready": "Ready",
+      "playing": "Playing",
+      "paused": "Paused"
+    }
+  },
+  "helpAndSupport": {
+    "title": "Help and Support Center",
+    "topics": {
+      "welcome": "Welcome",
+      "getting-started": "Getting Started",
+      "desktop": "Desktop Introduction",
+      "explorer": "File Explorer",
+      "internet": "Internet Explorer",
+      "applications": "Applications",
+      "settings": "System Settings",
+      "lessons": "Guided Lessons"
+    },
+    "lessons": {
+      "title": "Guided Lessons",
+      "intro": "Pick a lesson to walk through a task step by step. The desktop guides you and advances as you complete each step."
+    },
+    "content": {
+      "welcome": {
+        "title": "Welcome to Windows XP Help and Support Center",
+        "body": "Welcome to the Windows XP simulator. This classic desktop environment runs entirely in your browser.\n\nYou can explore the file system, browse the web, run applications, and use familiar Windows XP controls."
+      },
+      "gettingStarted": {
+        "title": "Getting Started",
+        "body": "Try these common tasks:\n\n1. Double-click a desktop icon to open it\n2. Use the Start menu to find programs\n3. Drag a title bar to move a window\n4. Resize supported windows\n5. Use the taskbar to manage open windows"
+      },
+      "desktop": {
+        "title": "Desktop Introduction",
+        "body": "The Windows XP desktop contains:\n\n- Icons for programs, folders, and files\n- A taskbar for open windows and notification icons\n- The Start menu for programs and system features\n- A configurable desktop background"
+      },
+      "explorer": {
+        "title": "File Explorer",
+        "body": "File Explorer manages files and folders.\n\nYou can browse folders, create and rename items, move files to the Recycle Bin, and view properties."
+      },
+      "internet": {
+        "title": "Internet Explorer",
+        "body": "Internet Explorer is the built-in web browser.\n\nUse the address bar, navigation buttons, browsing history, favorites, and the Home button to browse available pages."
+      },
+      "applications": {
+        "title": "Applications",
+        "body": "The English desktop includes classic system tools such as Notepad, Paint, Calculator, Windows Media Player, Minesweeper, Solitaire, Internet Explorer, and File Explorer."
+      },
+      "settings": {
+        "title": "System Settings",
+        "body": "Open Control Panel from the Start menu to change display, sound, mouse, and system settings. Language changes are applied after Windows restarts."
+      }
+    }
+  },
+  "mobileWarning": {
+    "title": "Touch controls",
+    "message": "Tap to select, double-tap to open, and press and hold for the right-click menu. Drag a window by its title bar.",
+    "gotIt": "Got it",
+    "rotateHint": "Rotate to landscape for a larger view."
+  },
+  "storage": {
+    "errorTitle": "Windows XP",
+    "quotaExceeded": "There is not enough space to save your changes. Free some space by emptying the Recycle Bin or deleting files, or your latest changes may be lost after a restart."
+  },
+  "recycleBinNotices": {
+    "restoreFallbackTitle": "Recycle Bin",
+    "restoreFallbackMessage": "The original folder of \"{{name}}\" no longer exists. It has been restored to the Desktop."
+  },
+  "deductionSheet": {
+    "title": "Deduction",
+    "verify": "Verify",
+    "choose": "— choose —",
+    "wordBank": "Word bank",
+    "solved": "Case closed — every deduction verified."
+  },
+  "stickyNote": {
+    "defaultTitle": "Note",
+    "dismiss": "Dismiss"
+  },
+  "evidenceBoard": {
+    "tray": "Evidence",
+    "unpin": "Remove from board",
+    "linkHint": "Click a card, then another, to string them together."
+  },
+  "searchOracle": {
+    "brand": "Search",
+    "placeholder": "Search the web",
+    "go": "Search",
+    "stat": "{{count}} results for \"{{query}}\"",
+    "empty": "No results for \"{{query}}\"",
+    "noResults": "Your search did not match any documents."
+  },
+  "lesson": {
+    "close": "Close lesson",
+    "progress": "Step {{current}} of {{total}}",
+    "done": "Lesson complete!",
+    "score": "Score: {{score}} / 100",
+    "watch": {
+      "pause": "⏸ Pause",
+      "resume": "▶ Resume"
+    },
+    "notepad": {
+      "title": "Lesson: Notepad basics",
+      "step1": "Open Notepad from the Start menu.",
+      "hint1a": "Click the Start button in the bottom-left corner.",
+      "hint1b": "Notepad is under All Programs → Accessories.",
+      "step2": "Type a short note, then save it to My Documents.",
+      "hint2": "Open the File menu and choose Save, then confirm the location."
+    }
+  },
+  "setup": {
+    "welcomeTitle": "Welcome to the {{product}} Setup Wizard",
+    "welcomeMessage": "This wizard will guide you through the installation of {{product}}.",
+    "licenseTitle": "License Agreement",
+    "licenseAccept": "I accept the terms of the license agreement",
+    "pathTitle": "Choose Install Location",
+    "pathLabel": "Install to:",
+    "browse": "Browse...",
+    "progressTitle": "Installing...",
+    "copying": "Copying: {{file}}",
+    "finishTitle": "Setup Complete",
+    "finishMessage": "{{product}} has been successfully installed.",
+    "back": "< Back",
+    "next": "Next >",
+    "cancel": "Cancel",
+    "finish": "Finish"
+  },
+  "addRemovePrograms": {
+    "title": "Add or Remove Programs",
+    "currentlyInstalled": "Currently installed programs",
+    "addNewPrograms": "Add New Programs",
+    "windowsComponents": "Add/Remove Windows Components",
+    "categories": {
+      "installed": "Change or Remove Programs",
+      "add": "Add New Programs",
+      "components": "Add/Remove Windows Components"
+    },
+    "changeRemove": "Change/Remove",
+    "noPrograms": "No programs are currently installed.",
+    "size": "Size:",
+    "installedOn": "Installed on:",
+    "publisher": "Publisher:",
+    "version": "Version:",
+    "confirmUninstall": "Are you sure you want to uninstall {{product}}?"
+  }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://eric.run.place/windows-xp/sitemap.xml

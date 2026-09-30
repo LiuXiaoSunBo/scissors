@@ -1,0 +1,35 @@
+node_modules/
+dist/
+xp-research/
+.env
+.DS_Store
+.dev/
+*.log
+page_snapshot*
+taskbar_context_menu*
+taskbar_screenshot*
+.playwright-mcp/
+.playwright-cli/
+test-results/
+playwright-report/
+tmp/
+*.png
+!src/**/*.png
+!e2e-visual/**/*.png
+!public/**/*.png
+*.yml
+!.github/**/*.yml
+
+# AI / dogfood artifacts
+code-review-report.md
+dogfood-output/
+dogfood-output-*/
+
+# XP research clones (local reference only, not part of the app)
+xp-research/
+
+# Chinese internet nostalgia research clones (local reference only)
+cn-net-research/
+
+# npm pack output (consumer-smoke, #206)
+*.tgz

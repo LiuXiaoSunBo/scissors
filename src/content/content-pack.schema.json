@@ -1,0 +1,329 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://caoergou.github.io/windows-xp/schemas/content-pack.schema.json",
+  "title": "ContentPack",
+  "description": "A content pack (#241): the top-level unit of an official game's content repository. Bundles authorized IE sites, a customFileSystem fragment, a scenario, per-culture string tables, and an asset manifest. Every field is optional.",
+  "type": "object",
+  "required": ["id"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable id — namespaces the asset cache and feeds the snapshot fingerprint.",
+      "minLength": 1
+    },
+    "assets": {
+      "type": "object",
+      "description": "Logical asset key → concrete source, resolved once when the host mounts the pack. Values should be inline or { url } sources, not { asset } (which would be an indirection loop).",
+      "additionalProperties": { "$ref": "#/definitions/contentRef" }
+    },
+    "sites": {
+      "type": "object",
+      "description": "IE authorized-site registry. Keys are URLs (normalized at load time, rules per #149); an authorized page always wins over the search corpus / Wayback fallback.",
+      "additionalProperties": { "$ref": "#/definitions/siteDef" }
+    },
+    "files": {
+      "type": "object",
+      "description": "customFileSystem fragment. File nodes may carry `contentRef` in place of inline `content`.",
+      "additionalProperties": true
+    },
+    "recycleBin": {
+      "type": "object",
+      "description": "Authored Recycle Bin records with stable paths and deletion times.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["item", "originalPath", "deletedAt"],
+        "properties": {
+          "item": { "type": "object" },
+          "originalPath": { "type": "array", "items": { "type": "string" } },
+          "originalName": { "type": "string" },
+          "deletedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "recentDocuments": {
+      "type": "array",
+      "description": "Historical MRU entries merged with runtime file opens.",
+      "items": {
+        "type": "object",
+        "required": ["path", "openedAt"],
+        "properties": {
+          "path": { "type": "array", "items": { "type": "string" } },
+          "openedAt": { "type": "string", "format": "date-time" },
+          "source": { "enum": ["seeded", "runtime"] }
+        }
+      }
+    },
+    "printers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "location": { "type": "string" },
+          "isDefault": { "type": "boolean" }
+        }
+      }
+    },
+    "printJobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "documentName", "submittedAt", "printerId", "status"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "documentName": { "type": "string", "minLength": 1 },
+          "submittedAt": { "type": "string", "format": "date-time" },
+          "printerId": { "type": "string", "minLength": 1 },
+          "status": {
+            "enum": ["queued", "printing", "paused", "error", "completed", "deleted", "orphaned"]
+          }
+        }
+      }
+    },
+    "playlists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "tracks"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "tracks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "title", "src"],
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "reports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reportId"],
+        "additionalProperties": true,
+        "properties": {
+          "reportId": { "type": "string", "minLength": 1 },
+          "claims": { "type": "array" },
+          "evidence": { "type": "array" }
+        }
+      }
+    },
+    "powerSequence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "blackoutAfterMs": { "type": "number", "minimum": 0 },
+        "reload": { "enum": ["immediate", "after-sequence", "manual"] },
+        "maxDurationMs": { "type": "number", "minimum": 0 },
+        "blackout": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": { "enum": ["audio", "text"] },
+              "src": { "$ref": "#/definitions/contentRef" },
+              "text": { "type": "string" },
+              "textKey": { "type": "string" },
+              "captions": { "type": "string" },
+              "delayMs": { "type": "number", "minimum": 0 },
+              "durationMs": { "type": "number", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "qqArchives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "conversations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string" },
+          "conversations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "title", "kind", "memberIds", "messages"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "title": { "type": "string" },
+                "kind": { "enum": ["direct", "group"] },
+                "memberIds": { "type": "array", "items": { "type": "string" } },
+                "messages": { "type": "array" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "description": "The scenario rulebook (#84/#207). See docs/SCENARIOS.md for its schema."
+    },
+    "strings": {
+      "type": "object",
+      "description": "Per-culture string tables: culture id → key → text (#207 copy-extraction carrier).",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "string" }
+      }
+    },
+    "narrative": {
+      "type": "object",
+      "description": "Optional fair-play metadata consumed by authoring lint only (#267).",
+      "additionalProperties": false,
+      "properties": {
+        "prominent": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "tier", "ref"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "tier": { "enum": ["required", "optional"] },
+              "ref": { "$ref": "#/definitions/narrativeRef" }
+            }
+          }
+        },
+        "redHerrings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "ref"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "ref": { "$ref": "#/definitions/narrativeRef" },
+              "misdirection": { "type": "string", "minLength": 1 },
+              "explanation": { "type": "string", "minLength": 1 },
+              "payoff": { "$ref": "#/definitions/narrativeRef" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "narrativeRef": {
+      "title": "NarrativeRef",
+      "description": "A concrete story object whose existence and payoff can be checked.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "key"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "asset" },
+            "key": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["kind", "path"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "file" },
+            "path": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["kind", "url"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "site" },
+            "url": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["kind", "id"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "contact" },
+            "id": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "contentRef": {
+      "title": "ContentRef",
+      "description": "A reference to a piece of content. Three sources, one shape.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Inline: the content itself."
+        },
+        {
+          "type": "object",
+          "description": "A host asset URL resolved at load time (build import / public path / CDN).",
+          "required": ["url"],
+          "additionalProperties": false,
+          "properties": { "url": { "type": "string" } }
+        },
+        {
+          "type": "object",
+          "description": "A logical key resolved through the pack's `assets` manifest — the portable reference.",
+          "required": ["asset"],
+          "additionalProperties": false,
+          "properties": { "asset": { "type": "string" } }
+        }
+      ]
+    },
+    "siteDef": {
+      "title": "SiteDef",
+      "description": "An authorized IE site (#149/#241).",
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [{ "required": ["html"] }, { "required": ["page"] }],
+      "properties": {
+        "html": {
+          "description": "The page body to render (inline HTML, a host url, or an asset key).",
+          "$ref": "#/definitions/contentRef"
+        },
+        "title": {
+          "type": "string",
+          "description": "Browser/tab title; falls back to the site's URL key when omitted."
+        },
+        "favicon": {
+          "description": "Optional favicon (icon id, data URI, or a ContentRef).",
+          "$ref": "#/definitions/contentRef"
+        },
+        "page": {
+          "$ref": "#/definitions/eraPage"
+        }
+      }
+    },
+    "eraPage": {
+      "title": "EraPage",
+      "type": "object",
+      "required": ["template", "title", "sections"],
+      "additionalProperties": false,
+      "properties": {
+        "template": { "enum": ["portal", "news", "forum", "profile"] },
+        "title": { "type": "string" },
+        "masthead": { "type": "string" },
+        "nav": { "type": "array" },
+        "sections": { "type": "array", "minItems": 1 },
+        "sidebar": { "type": "array" },
+        "footer": { "type": "string" }
+      }
+    }
+  }
+}

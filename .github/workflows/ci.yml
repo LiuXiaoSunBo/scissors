@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# When several agents push in quick succession the shared runner pool gets
+# saturated and e2e runs slow to a crawl. Cancel superseded runs per ref so a
+# fresh push doesn't queue behind its own stale runs.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint / typecheck / unit / size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run schema:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - name: Dead files & dependencies (knip)
+        run: npm run knip
+      - run: npm run guard:nocheck
+      - run: npm run guard:purity
+      - name: Unit tests (full suite)
+        run: npx vitest run
+      - name: Story toolchain (lint / solve / pack)
+        run: npm run scenario:ci
+      - name: Library build (for size guard)
+        run: npm run build:lib
+      - name: Scenario tools package build
+        run: npm run scenario:build
+      - run: npm run size:check
+
+  consumer-smoke:
+    name: Consumer smoke (pack → install → build → render)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Consumes the packed tarball as a real npm user would (#206). It's the only
+    # gate that catches package-level regressions — a dead `sideEffects` path, an
+    # unresolvable export subpath, a style.css that doesn't ship, a .d.ts that
+    # breaks under React 18/19. Heavier than the unit gate (fresh install +
+    # consumer build), so it runs only on main pushes and release-labelled PRs.
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'release')
+    # Official Playwright image so the render smoke's Chromium matches the specs.
+    container:
+      image: mcr.microsoft.com/playwright:v1.57.0-jammy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Consumer smoke
+        run: npm run consumer:smoke
+        env:
+          CI: 'true'
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Official Playwright image so the bundled Chromium build and fonts match
+    # what the specs were written against (same pattern as visual.yml).
+    container:
+      image: mcr.microsoft.com/playwright:v1.57.0-jammy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Run e2e suite
+        run: npm run test:e2e
+        env:
+          CI: 'true'
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

@@ -1,0 +1,279 @@
+{
+  "root": {
+    "type": "folder",
+    "name": "root",
+    "children": {
+      "我的电脑": {
+        "type": "folder",
+        "name": "我的电脑",
+        "icon": "computer",
+        "protected": true,
+        "children": {
+          "本地磁盘 (C:)": {
+            "type": "folder",
+            "name": "本地磁盘 (C:)",
+            "icon": "drive",
+            "protected": true,
+            "children": {
+              "Program Files": {
+                "type": "folder",
+                "name": "Program Files",
+                "children": {
+                  "Internet Explorer": {
+                    "type": "folder",
+                    "name": "Internet Explorer",
+                    "children": {}
+                  },
+                  "Windows Media Player": {
+                    "type": "folder",
+                    "name": "Windows Media Player",
+                    "children": {}
+                  },
+                  "Accessories": {
+                    "type": "folder",
+                    "name": "Accessories",
+                    "children": {}
+                  }
+                }
+              },
+              "WINDOWS": {
+                "type": "folder",
+                "name": "WINDOWS",
+                "locked": true,
+                "password": "admin",
+                "children": {}
+              },
+              "boot.ini": {
+                "type": "file",
+                "name": "boot.ini",
+                "hidden": true,
+                "protected": true,
+                "mtime": "2003-10-25",
+                "content": "[boot loader]\r\ntimeout=30\r\ndefault=multi(0)disk(0)rdisk(0)partition(1)\\WINDOWS\r\n[operating systems]\r\nmulti(0)disk(0)rdisk(0)partition(1)\\WINDOWS=\"Microsoft Windows XP Professional\" /noexecute=optin /fastdetect\r\n"
+              },
+              "ntldr": {
+                "type": "file",
+                "name": "ntldr",
+                "hidden": true,
+                "protected": true,
+                "mtime": "2004-08-04"
+              },
+              "pagefile.sys": {
+                "type": "file",
+                "name": "pagefile.sys",
+                "hidden": true,
+                "protected": true,
+                "mtime": "2007-08-12"
+              }
+            }
+          },
+          "本地磁盘 (D:)": {
+            "type": "folder",
+            "name": "本地磁盘 (D:)",
+            "icon": "drive",
+            "protected": true,
+            "children": {
+              "备份": {
+                "type": "folder",
+                "name": "备份",
+                "children": {
+                  "文档备份.zip": {
+                    "type": "file",
+                    "name": "文档备份.zip",
+                    "broken": true,
+                    "app": "Notepad"
+                  }
+                }
+              },
+              "游戏": {
+                "type": "folder",
+                "name": "游戏",
+                "children": {
+                  "聊天记录.txt": {
+                    "type": "file",
+                    "name": "聊天记录.txt",
+                    "app": "Notepad",
+                    "content": "「往事随风」对「水晶女孩」说：\r\n在吗？晚上去网吧联机 CS 吗？\r\n\r\n「水晶女孩」对「往事随风」说：\r\n好呀，我先把 QQ 隐身挂好等级。\r\n\r\n「往事随风」对「水晶女孩」说：\r\n哈哈，记得把迅雷下载完的电影发我。\r\n"
+                  },
+                  "CS1.6.lnk": {
+                    "type": "app_shortcut",
+                    "name": "CS1.6.lnk",
+                    "app": "InternetExplorer",
+                    "icon": "app_window",
+                    "url": "about:blank"
+                  }
+                }
+              },
+              "音乐": {
+                "type": "folder",
+                "name": "音乐",
+                "children": {
+                  "我的最爱.m3u": {
+                    "type": "file",
+                    "name": "我的最爱.m3u",
+                    "icon": "media_player",
+                    "app": "WindowsMediaPlayer",
+                    "broken": true
+                  }
+                }
+              }
+            }
+          },
+          "DVD/CD-RW 驱动器 (E:)": {
+            "type": "folder",
+            "name": "DVD/CD-RW 驱动器 (E:)",
+            "icon": "drive",
+            "protected": true,
+            "broken": true,
+            "children": {}
+          }
+        }
+      },
+      "我的文档": {
+        "type": "folder",
+        "name": "我的文档",
+        "icon": "documents",
+        "protected": true,
+        "children": {
+          "我的音乐": {
+            "type": "folder",
+            "name": "我的音乐",
+            "icon": "folder",
+            "children": {
+              "示例音乐": {
+                "type": "folder",
+                "name": "示例音乐",
+                "children": {
+                  "Beethoven's Symphony No. 9.mp3": {
+                    "type": "file",
+                    "name": "Beethoven's Symphony No. 9.mp3",
+                    "icon": "music_library",
+                    "broken": true
+                  },
+                  "Mozart - Eine Kleine.mp3": {
+                    "type": "file",
+                    "name": "Mozart - Eine Kleine.mp3",
+                    "icon": "music_library",
+                    "broken": true
+                  },
+                  "Sample Music.mp3": {
+                    "type": "file",
+                    "name": "Sample Music.mp3",
+                    "icon": "music_library",
+                    "app": "mp3",
+                    "content": "/audio/sample.mp3"
+                  }
+                }
+              }
+            }
+          },
+          "我的图片": {
+            "type": "folder",
+            "name": "我的图片",
+            "icon": "folder",
+            "children": {
+              "Sample Pictures": {
+                "type": "folder",
+                "name": "Sample Pictures",
+                "children": {
+                  "Bliss.jpg": {
+                    "type": "file",
+                    "name": "Bliss.jpg",
+                    "app": "PhotoViewer",
+                    "icon": "image",
+                    "content": "/images/desktop_bg.jpg",
+                    "description": "Windows XP classic wallpaper"
+                  },
+                  "Sunset.jpg": {
+                    "type": "file",
+                    "name": "Sunset.jpg",
+                    "app": "PhotoViewer",
+                    "icon": "image",
+                    "content": "/images/desktop_bg.jpg",
+                    "description": "Sunset photo"
+                  }
+                }
+              }
+            }
+          },
+          "我的视频": {
+            "type": "folder",
+            "name": "我的视频",
+            "icon": "folder",
+            "children": {}
+          },
+          "readme.txt": {
+            "type": "file",
+            "name": "readme.txt",
+            "app": "Notepad",
+            "content": "Welcome to Windows XP!\r\n\r\nThis is a simulated Windows XP desktop environment built with React.\r\n\r\nFeel free to explore the file system, open applications, and browse the web.\r\n\r\nEnjoy your computing experience!\r\n"
+          },
+          "about.md": {
+            "type": "file",
+            "name": "about.md",
+            "app": "MarkdownViewer",
+            "content": "# About This Desktop\r\n\r\nThis is a **Windows XP** desktop engine for React — an embeddable, scriptable recreation of the classic experience.\r\n\r\n## What you can do\r\n\r\n- Open apps, browse the *virtual* file system, and surf a period web\r\n- Drive it from code via the imperative `ref` handle\r\n- Author your own content: file systems, culture packages, and apps\r\n\r\n## Markdown, rendered\r\n\r\nThis file opens in the **Markdown Viewer**, not Notepad. It supports headings, lists, `inline code`, and [links](https://github.com/caoergou/windows-xp).\r\n\r\n> The desktop is the inventory.\r\n"
+          }
+        }
+      },
+      "回收站": {
+        "type": "folder",
+        "name": "回收站",
+        "icon": "recycle_bin",
+        "protected": true,
+        "children": {}
+      },
+      "网上邻居": {
+        "type": "folder",
+        "name": "网上邻居",
+        "icon": "network",
+        "protected": true,
+        "children": {
+          "整个网络": {
+            "type": "folder",
+            "name": "整个网络",
+            "icon": "network_connections",
+            "children": {}
+          }
+        }
+      },
+      "Internet Explorer": {
+        "type": "app_shortcut",
+        "name": "Internet Explorer",
+        "app": "InternetExplorer",
+        "icon": "ie",
+        "url": "http://www.hao123.com"
+      },
+      "Notepad": {
+        "type": "app_shortcut",
+        "name": "Notepad",
+        "app": "Notepad",
+        "icon": "journal"
+      },
+      "Calculator": {
+        "type": "app_shortcut",
+        "name": "Calculator",
+        "app": "Calculator",
+        "icon": "calculator"
+      },
+      "Microsoft Paint": {
+        "type": "app_shortcut",
+        "name": "Microsoft Paint",
+        "app": "MicrosoftPaint",
+        "icon": "paint"
+      },
+      "Minesweeper": {
+        "type": "app_shortcut",
+        "name": "Minesweeper",
+        "app": "Minesweeper",
+        "icon": "minesweeper"
+      },
+      "Solitaire": {
+        "type": "app_shortcut",
+        "name": "Solitaire",
+        "app": "Solitaire",
+        "icon": "solitaire"
+      }
+    }
+  }
+}
